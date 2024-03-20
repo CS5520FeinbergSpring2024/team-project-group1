@@ -31,16 +31,27 @@
         android:layout_height="wrap_content"
         android:hint="@string/password"
         android:inputType="textPassword"
+
         app:layout_constraintTop_toBottomOf="@id/editTextEmail"
         app:layout_constraintStart_toStartOf="@id/editTextEmail"
         app:layout_constraintEnd_toEndOf="@id/editTextEmail"
         app:layout_constraintWidth_percent="0.8"/>
+
+    <TextView
+        android:id="@+id/textViewForgetPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forget_password"
+        app:layout_constraintEnd_toEndOf="@id/editTextPassword"
+        app:layout_constraintTop_toBottomOf="@id/editTextPassword" />
+
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/log_in"
-        app:layout_constraintTop_toBottomOf="@id/editTextPassword"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewForgetPassword"
         app:layout_constraintStart_toStartOf="@id/editTextPassword"
         app:layout_constraintEnd_toEndOf="@id/editTextPassword"
         app:layout_constraintWidth_percent="0.8"/>
