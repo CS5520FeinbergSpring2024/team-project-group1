@@ -3,23 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_profile">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="edu.northeastern.new_final.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/nav_profile"
+        android:name="edu.northeastern.new_final.ui.profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="edu.northeastern.new_final.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_personal_goal"
+        android:name="edu.northeastern.new_final.ui.personalGoal.PersonalGoalFragment"
+        android:label="@string/menu_personal_goal"
+        tools:layout="@layout/fragment_personal_goal" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="edu.northeastern.new_final.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_challenge_group"
+        android:name="edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupFragment"
+        android:label="@string/menu_challenge_group"
+        tools:layout="@layout/fragment_challenge_group" />
 </navigation>

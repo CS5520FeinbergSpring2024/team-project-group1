@@ -2,14 +2,14 @@
     <string name="app_name">New_final</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Fitness Flora</string>
+    <string name="nav_header_subtitle">Bloom with Fitness: Where Every Sweat Sprouts Joy!</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_personal_goal">Add A Personal Goal</string>
+    <string name="menu_challenge_group">Create A Challenge Group</string>
 
 <!--    login page-->
     <string name="email">Enter your email address </string>
