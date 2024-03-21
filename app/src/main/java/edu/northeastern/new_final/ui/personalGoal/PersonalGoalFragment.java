@@ -1,4 +1,4 @@
-package edu.northeastern.new_final.ui.slideshow;
+package edu.northeastern.new_final.ui.personalGoal;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import edu.northeastern.new_final.databinding.FragmentSlideshowBinding;
 
-public class SlideshowFragment extends Fragment {
+import edu.northeastern.new_final.databinding.FragmentPersonalGoalBinding;
 
-    private FragmentSlideshowBinding binding;
+public class PersonalGoalFragment extends Fragment {
+
+    private FragmentPersonalGoalBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SlideshowViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
+        PersonalGoalViewModel personalGoalViewModel =
+                new ViewModelProvider(this).get(PersonalGoalViewModel.class);
 
-        binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+        binding = FragmentPersonalGoalBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textPersonalGoal;
+        personalGoalViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
