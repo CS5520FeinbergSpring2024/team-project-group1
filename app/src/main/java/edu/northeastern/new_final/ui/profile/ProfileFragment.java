@@ -39,7 +39,7 @@ public class ProfileFragment extends Fragment {
         int screenHeight = displayMetrics.heightPixels;
 
         // Calculate height of the image to be two-thirds of the screen height
-        int imageHeight = (int) (screenHeight * 2 / 3.0);
+        int imageHeight = (int) (screenHeight * 0.55);
 
         // Get reference to the ImageView and adjust its height
         ImageView imageView = binding.imageViewGarden;
