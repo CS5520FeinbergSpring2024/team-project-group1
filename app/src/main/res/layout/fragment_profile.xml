@@ -89,86 +89,44 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Button 1 with icon -->
-        <LinearLayout
+        <!-- Button Home -->
+        <Button
+            android:id="@+id/button_home"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:drawableTop="@drawable/star_icon"
+            android:backgroundTint="@color/white"
+            android:gravity="center"
+            android:text="@string/button_home"
+            android:textSize="8dp"
+            android:textColor="@android:color/black" />
 
-            <!-- replace star with house icon -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/star_icon"
-                android:contentDescription="Button Home Icon"/>
-
-            <TextView
-                android:id="@+id/button_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/button_home"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Button 2 with icon -->
-        <LinearLayout
+        <!-- Button 2 -->
+        <Button
+            android:id="@+id/button_groups"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:drawableTop="@drawable/star_icon"
+            android:backgroundTint="@color/white"
+            android:gravity="center"
+            android:text="@string/button_groups"
+            android:textSize="8dp"
+            android:textColor="@android:color/black" />
 
-            <!-- replace star with appropriate group icon -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/star_icon"
-                android:contentDescription="Button Groups Icon"/>
-
-            <TextView
-                android:id="@+id/button_groups"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/button_groups"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Button 3 with icon -->
-        <LinearLayout
+        <!-- Workout History Button -->
+        <Button
+            android:id="@+id/button_workouts"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <!-- replace star with appropriate workout history icon -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/star_icon"
-                android:contentDescription="Button Workouts Icon"/>
-
-            <TextView
-                android:id="@+id/button_workouts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/button_workouts"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
-
-    </LinearLayout>
+            android:drawableTop="@drawable/star_icon"
+            android:backgroundTint="@color/white"
+            android:gravity="center"
+            android:text="@string/button_workouts"
+            android:textSize="8dp"
+            android:textColor="@android:color/black" />
 
     </LinearLayout>
 
