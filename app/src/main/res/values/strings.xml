@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">New_final</string>
+    <string name="app_name_phone">Fitness Flora</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Fitness Flora</string>
@@ -11,10 +12,16 @@
     <string name="menu_personal_goal">Add A Personal Goal</string>
     <string name="menu_challenge_group">Create A Challenge Group</string>
 
-<!--    login page-->
+    <!--    login page-->
     <string name="email">Enter your email address </string>
     <string name="password">Enter your password </string>
     <string name="log_in">Log in </string>
     <string name="sign_up">Sign up </string>
     <string name="forget_password">Forgot password?</string>
+
+    <!--    profile page-->
+    <string name="button_home">Home </string>
+    <string name="button_groups">My Groups </string>
+    <string name="button_workouts">Workout History </string>
+
 </resources>
