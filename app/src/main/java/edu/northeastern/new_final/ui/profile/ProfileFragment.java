@@ -6,9 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
@@ -61,9 +63,31 @@ public class ProfileFragment extends Fragment {
         loadFragment(new HomeFragment());
 
         // Set onClickListeners for bottom bar nav buttons
-        root.findViewById(R.id.button_home).setOnClickListener(v -> loadFragment(new HomeFragment()));
-        root.findViewById(R.id.button_groups).setOnClickListener(v -> loadFragment(new MyGroupsFragment()));
-        root.findViewById(R.id.button_workouts).setOnClickListener(v -> loadFragment(new WorkoutHistoryFragment()));
+        Button buttonHome = root.findViewById(R.id.button_home);
+        Button buttonGroups = root.findViewById(R.id.button_groups);
+        Button buttonWorkouts = root.findViewById(R.id.button_workouts);
+
+        buttonHome.setOnClickListener(v -> {
+            loadFragment(new HomeFragment());
+            buttonHome.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.purple_pastel));
+            buttonGroups.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+            buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+        });
+
+        buttonGroups.setOnClickListener(v -> {
+            loadFragment(new MyGroupsFragment());
+            buttonHome.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+            buttonGroups.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.purple_pastel));
+            buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+        });
+
+        buttonWorkouts.setOnClickListener(v -> {
+            loadFragment(new WorkoutHistoryFragment());
+            buttonHome.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+            buttonGroups.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+            buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.purple_pastel));
+        });
+
 
         return root;
     }
