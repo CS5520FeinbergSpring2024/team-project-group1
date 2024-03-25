@@ -62,7 +62,7 @@ public class ProfileFragment extends Fragment {
         // Set initial fragment
         loadFragment(new HomeFragment());
 
-        // Set onClickListeners for bottom bar nav buttons
+        // Set onClickListeners for bottom bar nav buttons. Programmatically change button color.
         Button buttonHome = root.findViewById(R.id.button_home);
         Button buttonGroups = root.findViewById(R.id.button_groups);
         Button buttonWorkouts = root.findViewById(R.id.button_workouts);

@@ -23,7 +23,15 @@
     <string name="button_home">Home </string>
     <string name="button_groups">My Groups </string>
     <string name="button_workouts">Workout History </string>
+    <string name="button_logWorkout">+ Log Workout </string>
+    <string name="energyPoints_label">Total Energy Points </string>
+    <string name="energyPoints_number">25 </string>
+    <string name="personal_goals">Personal Goals: </string>
+
+
+
     <string name="large_text">
+
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."

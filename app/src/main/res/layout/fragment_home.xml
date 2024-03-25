@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.profile.HomeFragment">
 
     <TextView
@@ -10,4 +12,87 @@
         android:layout_height="match_parent"
         android:text="Home Fragment" />
 
-</FrameLayout>
+
+    <ImageView
+        android:id="@+id/leaf_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src= "@drawable/star_icon"
+        android:layout_marginTop="16dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/energyProgressBar"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/energyProgressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:progressTint="@color/green_background"
+        android:backgroundTint="@color/white"
+        android:max="100"
+        android:progress="50"
+        android:layout_marginTop="16dp"
+
+        app:layout_constraintStart_toEndOf="@id/leaf_icon"
+        app:layout_constraintEnd_toStartOf="@id/button_logWorkout"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/button_logWorkout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_logWorkout"
+        android:textSize="12dp"
+        android:backgroundTint="@color/forest_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/energyProgressBar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_EPLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/energyPoints_label"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/leaf_icon" />
+
+    <TextView
+        android:id="@+id/textView_EPNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/energyPoints_number"
+        android:textColor="@color/black"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textView_EPLabel"
+        app:layout_constraintTop_toBottomOf="@id/leaf_icon"
+/>
+
+    <TextView
+        android:id="@+id/textView_personalGoals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/personal_goals"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_EPLabel"
+ />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/personal_goal_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="195dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_personalGoals"
+ />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
