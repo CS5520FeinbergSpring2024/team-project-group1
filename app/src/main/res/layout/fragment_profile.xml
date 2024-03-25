@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/star_icon"
-            android:backgroundTint="@color/white"
+            android:background="@drawable/button_selector"
             android:gravity="center"
             android:text="@string/button_home"
             android:textSize="8dp"
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/star_icon"
-            android:backgroundTint="@color/white"
+            android:background="@drawable/button_selector"
             android:gravity="center"
             android:text="@string/button_groups"
             android:textSize="8dp"
@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/star_icon"
-            android:backgroundTint="@color/white"
+            android:background="@drawable/button_selector"
             android:gravity="center"
             android:text="@string/button_workouts"
             android:textSize="8dp"
@@ -130,5 +130,13 @@
 
     </LinearLayout>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
