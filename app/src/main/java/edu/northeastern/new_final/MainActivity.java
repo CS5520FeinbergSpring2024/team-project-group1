@@ -1,5 +1,6 @@
 package edu.northeastern.new_final;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -13,8 +14,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.MenuItem;
+
 
 import edu.northeastern.new_final.databinding.ActivityMainBinding;
+import edu.northeastern.new_final.ui.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,4 +66,22 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.logout_settings) {
+            // Code to navigate to LoginActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish(); // Close the current activity
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }
