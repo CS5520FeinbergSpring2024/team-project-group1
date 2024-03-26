@@ -17,7 +17,7 @@
         android:id="@+id/leaf_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src= "@drawable/star_icon"
+        android:src= "@drawable/leaf_img"
         android:layout_marginTop="16dp"
 
         app:layout_constraintStart_toStartOf="parent"
@@ -43,6 +43,7 @@
         android:id="@+id/button_logWorkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/button_logWorkout"
         android:textSize="12dp"
         android:backgroundTint="@color/forest_green"
