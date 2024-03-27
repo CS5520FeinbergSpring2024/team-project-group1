@@ -120,5 +120,12 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="groupNm">Huskies</string>
+    <string name="group_challenge_details">Group Challenge Details</string>
+    <string name="points_lbl">Points </string>
+    <string name="percent_to_goal_lbl">Percent to Goal </string>
+    <string name="description_lbl">Description </string>
+    <string name="metric_lbl">Metric </string>
+    <string name="time_span_lbl">Time Span </string>
 
 </resources>
