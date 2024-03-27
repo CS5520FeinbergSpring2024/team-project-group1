@@ -112,6 +112,11 @@
                     android:layout_height="wrap_content"
                     android:text="@string/points_lbl"
                     android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/pointsValueTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -237,6 +242,11 @@
                     android:padding="8dp"
                     android:text="@string/metric_lbl"
                     android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/metricsValueTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -264,6 +274,12 @@
                     android:padding="8dp"
                     android:text="@string/time_span_lbl"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/timeSpanValueTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
