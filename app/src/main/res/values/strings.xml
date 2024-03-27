@@ -127,5 +127,6 @@
     <string name="description_lbl">Description </string>
     <string name="metric_lbl">Metric </string>
     <string name="time_span_lbl">Time Span </string>
+    <string name="leaderboard_lbl">Leaderboard</string>
 
 </resources>
