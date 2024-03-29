@@ -7,72 +7,94 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.profile.HomeFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home Fragment" />
 
 
-    <ImageView
-        android:id="@+id/leaf_icon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src= "@drawable/leaf_img"
-        android:layout_marginTop="16dp"
-
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/energyProgressBar"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
 
-    <ProgressBar
-        android:id="@+id/energyProgressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="100dp"
-        android:layout_height="32dp"
-        android:progressTint="@color/green_background"
-        android:backgroundTint="@color/white"
-        android:max="100"
-        android:progress="50"
-        android:layout_marginTop="16dp"
+>
 
-        app:layout_constraintStart_toEndOf="@id/leaf_icon"
-        app:layout_constraintEnd_toStartOf="@id/button_logWorkout"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <ImageView
+            android:id="@+id/leaf_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src= "@drawable/leaf_img"
+            android:layout_marginTop="16dp"
+
+
+/>
+
+        <ProgressBar
+            android:id="@+id/energyProgressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:progressTint="@color/green_background"
+            android:backgroundTint="@color/white"
+            android:max="100"
+            android:progress="50"
+
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="5dp"
+            app:layout_constraintStart_toEndOf="@id/leaf_icon"
+
+            />
+
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/button_logWorkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="25dp"
+        android:backgroundTint="@color/forest_green"
+
         android:text="@string/button_logWorkout"
         android:textSize="12dp"
-        android:backgroundTint="@color/forest_green"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/energyProgressBar"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView_EPLabel"
+
+    <LinearLayout
+        android:id="@+id/ll_EP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/energyPoints_label"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/leaf_icon" />
+        app:layout_constraintTop_toBottomOf="@id/ll_progress">
 
-    <TextView
-        android:id="@+id/textView_EPNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/energyPoints_number"
-        android:textColor="@color/black"
+        <TextView
+            android:id="@+id/textView_EPLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/energyPoints_label"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            app:layout_constraintTop_toBottomOf="@id/ll_progress" />
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/textView_EPLabel"
-        app:layout_constraintTop_toBottomOf="@id/leaf_icon"
-/>
+        <TextView
+            android:id="@+id/textView_EPNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/energyPoints_number"
+            android:textColor="@color/black"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/textView_EPLabel"
+             />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView_personalGoals"
@@ -81,19 +103,24 @@
         android:text="@string/personal_goals"
         android:textColor="@color/black"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_EPLabel"
+        app:layout_constraintTop_toBottomOf="@id/ll_EP"
  />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/personal_goal_recycler"
         android:layout_width="match_parent"
-        android:layout_height="195dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_personalGoals"
  />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

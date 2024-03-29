@@ -28,6 +28,13 @@
     <string name="energyPoints_number">25 </string>
     <string name="personal_goals">Personal Goals: </string>
 
+    <!--    personal goal page-->
+    <string name="pg_title">Add a Personal Goal </string>
+    <string name="pg_activityLabel">Activity:</string>
+    <string name="pg_metricLabel">Metric Type:</string>
+    <string name="pg_amountLabel">Metric Amount:</string>
+    <string name="pg_durationLabel">Duration (Due Date):</string>
+    <string name="pg_buttonLabel">Create Goal</string>
 
 
     <string name="large_text">
