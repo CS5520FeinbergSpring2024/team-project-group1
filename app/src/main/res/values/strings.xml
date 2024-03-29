@@ -128,5 +128,20 @@
     <string name="metric_lbl">Metric </string>
     <string name="time_span_lbl">Time Span </string>
     <string name="leaderboard_lbl">Leaderboard</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="create_challenge_group">Create Challenge Group</string>
+    <string name="group_details">Group Details</string>
+    <string name="workout_goal_details">Workout Goal Details</string>
+    <string name="enter_amount">Enter Amount</string>
+    <string name="due_date">Due Date</string>
+    <string name="select_date">Select Date</string>
+    <string name="add_group">Add Group +</string>
+    <string name="cancel">Cancel</string>
+    <string name="time">Time</string>
+    <string name="distance">Distance</string>
+    <string name="points">Points</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="enter_your_description_optional">Enter your description (optional)</string>
+    <string name="add_members">Add Members +</string>
 
 </resources>

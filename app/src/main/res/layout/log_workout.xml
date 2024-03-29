@@ -8,7 +8,7 @@
     android:background="@android:color/white">
 
     <TextView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/createGroupPageTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -27,7 +27,7 @@
         android:background="#006838"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
+        app:layout_constraintTop_toBottomOf="@id/createGroupPageTitle" />
 
     <TextView
         android:id="@+id/textViewActivity"
@@ -88,7 +88,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textViewDateCompleted"
+        android:id="@+id/dueDateLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -107,7 +107,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewDateCompleted" />
+        app:layout_constraintTop_toBottomOf="@id/dueDateLbl" />
 
     <LinearLayout
         android:id="@+id/rowEnergyPoints"
@@ -140,7 +140,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonAddWorkout"
+        android:id="@+id/buttonAddGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -183,7 +183,7 @@
         android:textOn="Time"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDateCompleted"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.807"
         app:layout_constraintStart_toEndOf="@+id/editTextAmount"
@@ -203,7 +203,7 @@
         android:textOn="Distance"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDateCompleted"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
         app:layout_constraintEnd_toStartOf="@+id/toggleButtonTime"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toEndOf="@+id/editTextAmount"
