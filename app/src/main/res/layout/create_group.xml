@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/distanceToggle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <EditText
+        android:id="@+id/editGroupName"
+        android:layout_width="166dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/charcoal_outline"
+        android:hint="@string/enter_name"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/longResponseEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewActivity" />
+
+    <View
+        android:id="@+id/greenStripe"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:background="#006838"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/group_details"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/greenStripe" />
+
+    <TextView
+        android:id="@+id/textViewGoalLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/workout_goal_details"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/longResponseEditText" />
+
+    <Spinner
+        android:id="@+id/spinnerWorkoutType"
+        android:layout_width="163dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewGoalLbl" />
+
+    <EditText
+        android:id="@+id/editTextAmount"
+        android:layout_width="166dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
+        android:hint="@string/enter_amount"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinnerWorkoutType" />
+
+    <TextView
+        android:id="@+id/dueDateLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/due_date"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextAmount" />
+
+    <EditText
+        android:id="@+id/dateEditText"
+        android:layout_width="376dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
+        android:drawableEnd="@drawable/calendar_icon"
+        android:focusable="false"
+        android:hint="@string/select_date"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dueDateLbl" />
+
+    <Button
+        android:id="@+id/buttonAddGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@android:color/transparent"
+        android:background="@drawable/button_style"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/add_group"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/buttonCancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/buttonCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/cancel"
+        android:textColor="@android:color/holo_blue_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ToggleButton
+        android:id="@+id/toggleButtonTime"
+        android:layout_width="55dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="64dp"
+        android:layout_weight="1"
+        android:background="@drawable/toggle_button_border"
+        android:checked="false"
+        android:text="@string/time"
+        android:textColor="#36454F"
+        android:textOff="@string/time"
+        android:textOn="@string/time"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toEndOf="@+id/editTextAmount"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAmount"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ToggleButton
+        android:id="@+id/toggleButtonDistance"
+        android:layout_width="70dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="64dp"
+        android:layout_weight="1"
+        android:background="@drawable/toggle_button_border"
+        android:checked="true"
+        android:text="@string/distance"
+        android:textColor="#36454F"
+        android:textOff="@string/distance"
+        android:textOn="@string/distance"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
+        app:layout_constraintEnd_toStartOf="@+id/toggleButtonTime"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/spinnerWorkoutType"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAmount"
+        app:layout_constraintVertical_bias="0.282" />
+
+    <ToggleButton
+        android:id="@+id/toggleButtonEP"
+        android:layout_width="66dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/toggle_button_border"
+        android:checked="true"
+        android:text="@string/points"
+        android:textColor="#36454F"
+        android:textOff="@string/points"
+        android:textOn="@string/points"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
+        app:layout_constraintEnd_toStartOf="@+id/toggleButtonTime"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/toggleButtonDistance"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGoalLbl"
+        app:layout_constraintVertical_bias="0.098" />
+
+    <Button
+        android:id="@+id/uploadImgBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_image"
+        android:background="@drawable/button_style"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/longResponseEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.475"
+        app:layout_constraintStart_toEndOf="@+id/editGroupName"
+        app:layout_constraintTop_toBottomOf="@+id/textViewActivity" />
+
+    <EditText
+        android:id="@+id/longResponseEditText"
+        android:layout_width="352dp"
+        android:layout_height="105dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/charcoal_outline"
+        android:gravity="start"
+        android:hint="@string/enter_your_description_optional"
+        android:inputType="textMultiLine"
+        android:lines="5"
+        android:maxLines="10"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/textViewGoalLbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.271"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editGroupName" />
+
+    <Button
+        android:id="@+id/AddGroupMembersBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_members"
+        android:background="@drawable/button_style"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAddGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.07"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateEditText"
+        app:layout_constraintVertical_bias="0.295" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
