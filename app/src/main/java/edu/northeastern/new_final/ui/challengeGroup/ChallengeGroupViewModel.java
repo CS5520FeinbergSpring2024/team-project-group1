@@ -4,16 +4,18 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import edu.northeastern.new_final.R;
+
 public class ChallengeGroupViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<Integer> layout;
 
     public ChallengeGroupViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is the challenge group fragment");
+        layout = new MutableLiveData<>();
+        layout.setValue(R.layout.create_group);
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<Integer> getLayout() {
+        return layout;
     }
 }
