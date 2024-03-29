@@ -17,5 +17,9 @@
             android:id="@+id/nav_challenge_group"
             android:icon="@drawable/group_run_img"
             android:title="@string/menu_challenge_group" />
+        <item
+            android:id="@+id/nav_log_workout"
+            android:icon = "@drawable/barbell"
+            android:title="@string/log_workout" />
     </group>
 </menu>

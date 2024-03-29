@@ -22,4 +22,11 @@
         android:name="edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupFragment"
         android:label="@string/menu_challenge_group"
         tools:layout="@layout/fragment_challenge_group" />
+
+    <fragment
+        android:id="@+id/nav_log_workout"
+        android:name="edu.northeastern.new_final.ui.logWorkout.LogWorkoutFragment"
+        android:label="Log Workout"
+        tools:layout="@layout/fragment_log_workout" />
+
 </navigation>

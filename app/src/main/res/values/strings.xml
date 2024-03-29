@@ -143,5 +143,7 @@
     <string name="upload_image">Upload Image</string>
     <string name="enter_your_description_optional">Enter your description (optional)</string>
     <string name="add_members">Add Members +</string>
+    <string name="my_groups">My Groups</string>
+    <string name="log_workout">Log Workout</string>
 
 </resources>
