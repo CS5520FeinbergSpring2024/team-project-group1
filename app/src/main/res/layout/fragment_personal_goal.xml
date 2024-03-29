@@ -7,6 +7,21 @@
     tools:context=".ui.personalGoal.PersonalGoalFragment">
 
     <TextView
+        android:id="@+id/textPersonalGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/forest_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
