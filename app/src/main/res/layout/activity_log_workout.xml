@@ -5,7 +5,8 @@
     android:id="@+id/distanceToggle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    tools:context=".LogWorkoutActivity">>
 
     <TextView
         android:id="@+id/textViewTitle"
