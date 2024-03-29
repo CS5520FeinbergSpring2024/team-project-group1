@@ -54,12 +54,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="25dp"
+        android:backgroundTint="@color/forest_green"
+
         android:text="@string/button_logWorkout"
         android:textSize="12dp"
-        android:backgroundTint="@color/forest_green"
-        android:layout_marginEnd="25dp"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintTop_toTopOf="parent" />
 
 
