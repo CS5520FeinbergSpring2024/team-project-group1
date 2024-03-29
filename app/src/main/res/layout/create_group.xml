@@ -121,6 +121,9 @@
         android:drawableEnd="@drawable/calendar_icon"
         android:focusable="false"
         android:hint="@string/select_date"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dueDateLbl" />
@@ -246,6 +249,8 @@
         android:inputType="textMultiLine"
         android:lines="5"
         android:maxLines="10"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/textViewGoalLbl"
         app:layout_constraintEnd_toEndOf="parent"
