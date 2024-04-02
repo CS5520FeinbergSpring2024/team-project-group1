@@ -88,14 +88,15 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/charcoal_outline"
         android:drawableEnd="@drawable/calendar_icon"
-        android:focusable="false"
+        android:focusable="true"
         android:hint="@string/select_date"
+        android:inputType="datetime|date"
         android:paddingStart="8dp"
         android:paddingTop="2dp"
         android:paddingEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dueDateLbl"/>
+        app:layout_constraintTop_toBottomOf="@id/dueDateLbl" />
 
     <LinearLayout
         android:id="@+id/rowEnergyPoints"

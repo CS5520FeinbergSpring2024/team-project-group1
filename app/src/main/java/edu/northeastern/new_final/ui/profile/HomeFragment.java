@@ -1,5 +1,7 @@
 package edu.northeastern.new_final.ui.profile;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.widget.Button;
 
 import edu.northeastern.new_final.LogWorkoutActivity;
 import edu.northeastern.new_final.R;
+import edu.northeastern.new_final.ui.logWorkout.LogWorkoutFragment;
 
 public class HomeFragment extends Fragment {
 
