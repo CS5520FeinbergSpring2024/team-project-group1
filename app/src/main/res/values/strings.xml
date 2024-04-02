@@ -37,6 +37,17 @@
     <string name="pg_buttonLabel">Create Goal</string>
 
 
+    <string-array name="activity_options">
+        <item>Run</item>
+        <item>Walk</item>
+    </string-array>
+
+
+    <string-array name="metric_options">
+        <item>miles</item>
+        <item>minutes</item>
+    </string-array>
+
     <string name="large_text">
 
         "Material is the metaphor.\n\n"
