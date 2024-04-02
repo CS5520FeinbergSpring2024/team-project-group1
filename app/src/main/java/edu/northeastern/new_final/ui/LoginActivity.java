@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +87,13 @@ public class LoginActivity extends AppCompatActivity {
                         if (userSnapshot.child("password").getValue(String.class).equals(password)) {
                             // Password matches, get the user ID
                             String userId = userSnapshot.getKey();
+
+                            // Store username in shared preferences
+                            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("email", email);
+                            editor.apply();
+
 
                             // Pass the user ID to MainActivity
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);

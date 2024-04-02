@@ -1,5 +1,7 @@
 package edu.northeastern.new_final.ui.personalGoal;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,6 +37,8 @@ public class PersonalGoalFragment extends Fragment {
     private FragmentPersonalGoalBinding binding;
     private DatabaseReference databaseReference;
 
+    String username;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         PersonalGoalViewModel personalGoalViewModel =
@@ -42,6 +46,13 @@ public class PersonalGoalFragment extends Fragment {
 
         binding = FragmentPersonalGoalBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // Retrieve username from shared preferences
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        username = sharedPreferences.getString("email", null);
+
+        // Log the username obtained from shared preferences
+        Log.d("PersonalGoalFragment", "Username: " + username);
 
         final TextView textView = binding.textPersonalGoal;
         personalGoalViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
@@ -65,24 +76,7 @@ public class PersonalGoalFragment extends Fragment {
         metricAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMetric.setAdapter(metricAdapter);
 
-        // Example: Retrieving the value from EditText
-        //String amount = editTextAmount.getText().toString();
 
-        if (editTextAmount == null) {
-            Log.e("PersonalGoalFragment", "editTextAmount is null");
-        }
-        if (spinnerActivity == null) {
-            Log.e("PersonalGoalFragment", "spinnerActivity is null");
-        }
-        if (spinnerMetric == null) {
-            Log.e("PersonalGoalFragment", "spinnerMetric is null");
-        }
-        if (editTextDate == null) {
-            Log.e("PersonalGoalFragment", "spinnerDuration is null");
-        }
-        if (buttonAddWorkout == null) {
-            Log.e("PersonalGoalFragment", "buttonAddWorkout is null");
-        }
 
         // Check if any of the views are null
         if (editTextAmount != null && spinnerActivity != null && spinnerMetric != null &&
@@ -134,7 +128,7 @@ public class PersonalGoalFragment extends Fragment {
         }
 
         // Generate a unique ID using the username and date
-        String uniqueID = generateUniqueID("testUser1", date);
+        String uniqueID = generateUniqueID(username, date);
 
         // Prepare data to be added to Firebase
         Map<String, Object> workoutData = new HashMap<>();
@@ -147,10 +141,22 @@ public class PersonalGoalFragment extends Fragment {
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // Push the data to the database with a unique key
-        databaseRef.child("personal_goals").child(uniqueID).setValue(workoutData);
+        databaseRef.child("personal_goals").child(uniqueID).setValue(workoutData)
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Notify user that data has been added
+                    Toast.makeText(requireContext(), "Personal Goal added!", Toast.LENGTH_SHORT).show();
 
-        // Notify user that data has been added
-        Toast.makeText(requireContext(), "Personal Goal added!", Toast.LENGTH_SHORT).show();
+                    // Clear fields after successful entry
+                    editTextAmount.setText("");
+                    editTextDate.setText("");
+                    spinnerActivity.setSelection(0); // Set default selection for spinner
+                    spinnerMetric.setSelection(0); // Set default selection for spinner
+                } else {
+                    // Handle unsuccessful entry
+                    Toast.makeText(requireContext(), "Failed to add Personal Goal!", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     // Method to format the date string
