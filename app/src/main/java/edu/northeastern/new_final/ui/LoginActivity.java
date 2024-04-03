@@ -22,6 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import edu.northeastern.new_final.MainActivity; // Make sure this import matches the location of your MainActivity
@@ -160,9 +162,13 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference usersRef = database.getReference("users");
 
+        // Sanitize email to use as Firebase key
+        String sanitizedEmail = email.replace(".", "_").replace("#", "_")
+                .replace("$", "_").replace("[", "_").replace("]", "_");
+
         // Check if the email already exists
-        Query query = usersRef.orderByChild("email").equalTo(email);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference userRef = usersRef.child(sanitizedEmail);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -170,19 +176,32 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Email already in use.",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    // Email does not exist, proceed with sign up
+
                     HashMap<String, Object> user = new HashMap<>();
-                    user.put("email", email);
+                    user.put("email", email); // Keep the original email format here for display purposes
                     user.put("password", password);
-                    // Generate a unique key for each new user
-                    String userId = usersRef.push().getKey();
+                    user.put("total_EP", 0);
+                    user.put("workout_history", new ArrayList<>());
+                    user.put("team_id", new ArrayList<>());
+
+                    // for demo purpose only!!
+                    HashMap<String, Object> goalDetails = new HashMap<>();
+                    goalDetails.put("activity", 0);
+                    goalDetails.put("metric_type", 0);
+                    goalDetails.put("metric_amount", 0);
+                    goalDetails.put("duration", 0);
+
+                    HashMap<String, Object> personalGoals = new HashMap<>();
+                    personalGoals.put("0", goalDetails); // Use "0" as a key for the goal details map
+                    user.put("personalGoals", personalGoals);
+
                     // Basic validation
                     if (email.isEmpty() || password.isEmpty()) {
                         Toast.makeText(LoginActivity.this, "Email and password are required.",
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    usersRef.child(userId).setValue(user)
+                    userRef.setValue(user)
                             .addOnCompleteListener(LoginActivity.this, task -> {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(LoginActivity.this, "Signed up successfully",
@@ -200,6 +219,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 
 }
