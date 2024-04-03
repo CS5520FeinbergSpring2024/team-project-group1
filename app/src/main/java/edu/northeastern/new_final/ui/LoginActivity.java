@@ -160,31 +160,46 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference usersRef = database.getReference("users");
 
-        // Create a new user object or use HashMap
-        HashMap<String, Object> user = new HashMap<>();
-        user.put("email", email);
-        user.put("password", password);
-
-        // Generate a unique key for each new user or use something unique from the user like the email
-        String userId = usersRef.push().getKey();
-        // Basic validation
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Email and password are required.",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Assuming email is unique and using it as a key (you would need to sanitize the email as Firebase keys can't contain '.', '#', '$', '[', or ']')
-        usersRef.child(userId).setValue(user)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Signed up successfully",
+        // Check if the email already exists
+        Query query = usersRef.orderByChild("email").equalTo(email);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Email already exists
+                    Toast.makeText(LoginActivity.this, "Email already in use.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // Email does not exist, proceed with sign up
+                    HashMap<String, Object> user = new HashMap<>();
+                    user.put("email", email);
+                    user.put("password", password);
+                    // Generate a unique key for each new user
+                    String userId = usersRef.push().getKey();
+                    // Basic validation
+                    if (email.isEmpty() || password.isEmpty()) {
+                        Toast.makeText(LoginActivity.this, "Email and password are required.",
                                 Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Failed to sign up user: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
+                    usersRef.child(userId).setValue(user)
+                            .addOnCompleteListener(LoginActivity.this, task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(LoginActivity.this, "Signed up successfully",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Failed to sign up user: " + task.getException().getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(LoginActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
 
 }
