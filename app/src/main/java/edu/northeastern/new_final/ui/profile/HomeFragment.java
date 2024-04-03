@@ -16,9 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import edu.northeastern.new_final.LogWorkoutActivity;
 import edu.northeastern.new_final.R;
-import edu.northeastern.new_final.ui.logWorkout.LogWorkoutFragment;
+import edu.northeastern.new_final.ui.logWorkout.LogWorkoutActivity;
 
 public class HomeFragment extends Fragment {
 
