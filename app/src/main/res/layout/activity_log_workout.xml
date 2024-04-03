@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".LogWorkoutActivity">>
+    tools:context=".ui.logWorkout.LogWorkoutActivity">
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="Activity"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,11 +43,16 @@
 
     <Spinner
         android:id="@+id/spinnerActivity"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="372dp"
+        android:layout_height="38dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
+        android:drawableEnd="@drawable/expand_arrow"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewActivity" />
@@ -71,6 +76,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:hint="Enter Amount"
+        android:background="@drawable/charcoal_outline"
         android:paddingStart="8dp"
         android:paddingTop="4dp"
         android:paddingEnd="8dp"
@@ -80,16 +86,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewAmount" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-    </LinearLayout>
-
     <TextView
-        android:id="@+id/textViewDateCompleted"
+        android:id="@+id/dueDateLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -99,16 +97,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextAmount" />
 
-    <Spinner
-        android:id="@+id/spinnerDateCompleted"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <EditText
+        android:id="@+id/dateEditText"
+        android:layout_width="376dp"
+        android:layout_height="37dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
+        android:drawableEnd="@drawable/calendar_icon"
+        android:focusable="false"
+        android:inputType="none"
+        android:hint="@string/select_date"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewDateCompleted" />
+        app:layout_constraintTop_toBottomOf="@id/dueDateLbl" />
 
     <LinearLayout
         android:id="@+id/rowEnergyPoints"
@@ -118,9 +124,12 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAddWorkout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinnerDateCompleted">
+        app:layout_constraintTop_toBottomOf="@+id/dateEditText"
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/textViewEnergyPoints"
@@ -134,7 +143,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
-            android:text="activityEP"
+            android:text="0"
             android:textColor="@android:color/holo_purple"
             android:textStyle="bold" />
 
@@ -176,7 +185,7 @@
         android:layout_height="38dp"
         android:layout_marginTop="12dp"
         android:layout_weight="1"
-        android:background="@drawable/toggle_button_border"
+        android:background="@drawable/toggle_button_border_unselected"
         android:checked="false"
         android:text="Time"
         android:textColor="#36454F"
@@ -184,7 +193,7 @@
         android:textOn="Time"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDateCompleted"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.807"
         app:layout_constraintStart_toEndOf="@+id/editTextAmount"
@@ -196,7 +205,7 @@
         android:layout_width="66dp"
         android:layout_height="36dp"
         android:layout_weight="1"
-        android:background="@drawable/toggle_button_border"
+        android:background="@drawable/toggle_button_border_unselected"
         android:checked="true"
         android:text="Distance"
         android:textColor="#36454F"
@@ -204,12 +213,24 @@
         android:textOn="Distance"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDateCompleted"
+        app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
         app:layout_constraintEnd_toStartOf="@+id/toggleButtonTime"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toEndOf="@+id/editTextAmount"
         app:layout_constraintTop_toBottomOf="@+id/textViewAmount"
         app:layout_constraintVertical_bias="0.282" />
+
+    <TextView
+        android:id="@+id/metricTypeLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/editTextAmount"
+        app:layout_constraintEnd_toEndOf="@+id/editTextAmount"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextAmount"
+        app:layout_constraintTop_toTopOf="@+id/editTextAmount" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
