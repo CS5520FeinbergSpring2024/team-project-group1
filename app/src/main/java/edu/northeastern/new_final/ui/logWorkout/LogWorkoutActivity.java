@@ -71,12 +71,12 @@ public class LogWorkoutActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         activitySpinner.setAdapter(adapter);
 
-        // Set on item selected listener for activity spinner
+        /**
         activitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedActivity = parent.getItemAtPosition(position).toString();
-                energyPoints.setText(checkUpdateEP());
+                //energyPoints.setText(checkUpdateEP());
             }
 
             @Override
@@ -91,13 +91,14 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                energyPoints.setText(checkUpdateEP());
+                //energyPoints.setText(checkUpdateEP());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+         */
 
         distanceToggleButton.setOnClickListener(v -> {
             if (distanceToggleButton.isChecked()) {
@@ -106,7 +107,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
                 timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
                 amountCategory = "distance";
                 metricLbl.setText("miles");
-                energyPoints.setText(checkUpdateEP());
+                //energyPoints.setText(checkUpdateEP());
             }
         });
 
@@ -117,7 +118,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
                 distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
                 amountCategory = "time";
                 metricLbl.setText("min");
-                energyPoints.setText(checkUpdateEP());
+                //energyPoints.setText(checkUpdateEP());
             }
         });
 
@@ -195,7 +196,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
     private int checkUpdateEP() {
         String amountStr = amountEditText.getText().toString().trim();
-        if (activity.isEmpty() || amountStr.isEmpty() || amountCategory.equals("") || amount < 0 || amount > 300) {
+        if (activity == null || amountStr == null || amountCategory == null || amountCategory.equals("")) {
             return 0;
         } else {
             return calculateEnergyPoints(amount, amountCategory);
