@@ -1,5 +1,7 @@
 package edu.northeastern.new_final.ui.logWorkout;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +14,8 @@ import android.widget.ToggleButton;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +48,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
     private DatabaseReference databaseRef;
     private TextView metricLbl;
     private TextView energyPoints;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,30 +64,29 @@ public class LogWorkoutActivity extends AppCompatActivity {
         dateEntry = findViewById(R.id.dateEditText);
         addWorkout = findViewById(R.id.buttonAddWorkout);
         cancelWorkout = findViewById(R.id.buttonCancel);
-        amountCategory = "";
         metricLbl = findViewById(R.id.metricTypeLbl);
         energyPoints = findViewById(R.id.textViewActivityEP);
+        activity = "Run";
 
         databaseRef = FirebaseDatabase.getInstance().getReference("users");
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        username = sharedPreferences.getString("email", null);
+        username = username.replace(".", "_").replace("#", "_")
+                .replace("$", "_").replace("[", "_").replace("]", "_");
+
+        // Initialize with distance selected
+        distanceToggleButton.setChecked(true);
+        timeToggleButton.setChecked(false);
+        distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
+        timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+        amountCategory = "distance";
+        metricLbl.setText("miles");
 
         // Populate activity spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.activityTypes, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         activitySpinner.setAdapter(adapter);
-
-        /**
-        activitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedActivity = parent.getItemAtPosition(position).toString();
-                //energyPoints.setText(checkUpdateEP());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
         amountEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -91,82 +95,66 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //energyPoints.setText(checkUpdateEP());
+                String epDisplay = checkUpdateEP();
+                energyPoints.setText(epDisplay);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
-         */
 
         distanceToggleButton.setOnClickListener(v -> {
-            if (distanceToggleButton.isChecked()) {
-                timeToggleButton.setChecked(false);
-                distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
-                timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
-                amountCategory = "distance";
-                metricLbl.setText("miles");
-                //energyPoints.setText(checkUpdateEP());
+            if (!distanceToggleButton.isChecked()) {
+                distanceToggleButton.setChecked(true);
             }
+            if (timeToggleButton.isChecked()) {
+                timeToggleButton.setChecked(false);
+            }
+            distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
+            timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            amountCategory = "distance";
+            metricLbl.setText("miles");
+            String epDisplay = checkUpdateEP();
+            energyPoints.setText(epDisplay);
         });
 
         timeToggleButton.setOnClickListener(v -> {
-            if (timeToggleButton.isChecked()) {
-                distanceToggleButton.setChecked(false);
-                timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
-                distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
-                amountCategory = "time";
-                metricLbl.setText("min");
-                //energyPoints.setText(checkUpdateEP());
+            if (!timeToggleButton.isChecked()) {
+                timeToggleButton.setChecked(true);
             }
+            if (distanceToggleButton.isChecked()) {
+                distanceToggleButton.setChecked(false);
+            }
+            timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
+            distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            amountCategory = "time";
+            metricLbl.setText("min");
+            String epDisplay = checkUpdateEP();
+            energyPoints.setText(epDisplay);
         });
+
 
         addWorkout.setOnClickListener(v -> {
             // Check if any of the fields are empty
             activity = activitySpinner.getSelectedItem().toString();
-            String amountStr = amountEditText.getText().toString().trim();
-            amount = Double.parseDouble(amountStr);
+            String amountStr = amountEditText.getText() != null ? amountEditText.getText().toString().trim() : "";
+            amount = !amountStr.equals("") ? Double.parseDouble(amountStr) : -1;
             date = dateEntry.getText().toString().trim();
 
-            if (activity.isEmpty() || amountStr.isEmpty() || date.isEmpty() || amountCategory.equals("") || amount < 0 || amount > 300) {
+            if (amountStr.equals("") || date.isEmpty() || amount < 0 || amount > 300) {
                 Toast.makeText(LogWorkoutActivity.this, "Error: Please fill out all fields", Toast.LENGTH_SHORT).show();
             } else {
                 // All fields are filled, proceed with adding workout
                 Workout newWorkout = new Workout(activity, amount, date, amountCategory);
-                DatabaseReference userWorkoutRef = databaseRef.child("newuser@gmail.com");
-                userWorkoutRef.child("workout_history").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            // User has workout history, add workout object to the existing array
-                            List<Workout> workoutHistory = new ArrayList<>();
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                Workout workout = snapshot.getValue(Workout.class);
-                                workoutHistory.add(workout);
-                            }
-                            // Add your new workout object to the array
-                            workoutHistory.add(newWorkout);
+                new Thread(() -> {
+                    Looper.prepare();
+                    addWorkoutToDatabase(newWorkout);
+                    Looper.loop();
+                }).start();
 
-                            // Update the workout history in the database
-                            userWorkoutRef.child("workout_history").setValue(workoutHistory);
-                        } else {
-                            // User doesn't have workout history, initialize it with a new array containing your workout object
-                            List<Workout> workoutHistory = new ArrayList<>();
-                            workoutHistory.add(newWorkout);
-
-                            // Save the initialized workout history to the database
-                            userWorkoutRef.child("workout_history").setValue(workoutHistory);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
-
-                Toast.makeText(LogWorkoutActivity.this, "Workout added successfully", Toast.LENGTH_SHORT).show();
-
+                // return to previous page
+                finish();
             }
         });
 
@@ -190,16 +178,18 @@ public class LogWorkoutActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        // Add functionality for other views as needed
+        cancelWorkout.setOnClickListener(v -> {
+            finish();
+        });
 
     }
 
-    private int checkUpdateEP() {
-        String amountStr = amountEditText.getText().toString().trim();
-        if (activity == null || amountStr == null || amountCategory == null || amountCategory.equals("")) {
-            return 0;
+    private String checkUpdateEP() {
+        String amountStr = amountEditText.getText() != null ? amountEditText.getText().toString().trim() : "";
+        if (amountStr.equals("")) {
+            return "0";
         } else {
-            return calculateEnergyPoints(amount, amountCategory);
+            return String.valueOf(calculateEnergyPoints(amount, amountCategory));
         }
     }
 
@@ -209,6 +199,53 @@ public class LogWorkoutActivity extends AppCompatActivity {
         } else {
             return Math.round((float) amount);
         }
+    }
+
+    private void addWorkoutToDatabase(Workout newWorkout) {
+        DatabaseReference userWorkoutRef = databaseRef.child(username);
+
+        incrementTotalEP(userWorkoutRef, newWorkout);
+        userWorkoutRef.child("workout_history").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    List<Workout> workoutHistory = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Workout workout = snapshot.getValue(Workout.class);
+                        workoutHistory.add(workout);
+                    }
+                    workoutHistory.add(newWorkout);
+                    userWorkoutRef.child("workout_history").setValue(workoutHistory);
+                } else {
+                    List<Workout> workoutHistory = new ArrayList<>();
+                    workoutHistory.add(newWorkout);
+                    userWorkoutRef.child("workout_history").setValue(workoutHistory);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void incrementTotalEP(DatabaseReference userWorkoutRef, Workout newWorkout) {
+        userWorkoutRef.child("total_EP").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int totalEP = 0;
+                if (dataSnapshot.exists()) {
+                    totalEP = dataSnapshot.getValue(Integer.class);
+                }
+                totalEP = totalEP + newWorkout.getEnergyPoints();
+                userWorkoutRef.child("total_EP").setValue(totalEP);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
 }
