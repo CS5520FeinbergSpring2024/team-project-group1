@@ -127,10 +127,6 @@ public class PersonalGoalFragment extends Fragment {
             date = formatDate(date);
         }
 
-        // Generate a unique ID using the username and date
-        String uniqueID = generateUniqueID(username, date);
-
-        // Prepare data to be added to Firebase
         Map<String, Object> workoutData = new HashMap<>();
         workoutData.put("metric_amount", amount);
         workoutData.put("activity", activity);
@@ -140,24 +136,28 @@ public class PersonalGoalFragment extends Fragment {
         // Get a reference to your Firebase database
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
-        // Push the data to the database with a unique key
-        databaseRef.child("personal_goals").child(uniqueID).setValue(workoutData)
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    // Notify user that data has been added
-                    Toast.makeText(requireContext(), "Personal Goal added!", Toast.LENGTH_SHORT).show();
+        // Push the data to the 'personalGoals' node for the current user
+        // The username should be sanitized to be used as a Firebase key, for example:
+        String sanitizedUsername = username.replace(".", ",");
+        databaseRef.child("users").child(sanitizedUsername).child("personalGoals").push().setValue(workoutData)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Notify user that data has been added
+                        Toast.makeText(requireContext(), "Personal Goal added!", Toast.LENGTH_SHORT).show();
 
-                    // Clear fields after successful entry
-                    editTextAmount.setText("");
-                    editTextDate.setText("");
-                    spinnerActivity.setSelection(0); // Set default selection for spinner
-                    spinnerMetric.setSelection(0); // Set default selection for spinner
-                } else {
-                    // Handle unsuccessful entry
-                    Toast.makeText(requireContext(), "Failed to add Personal Goal!", Toast.LENGTH_SHORT).show();
-                }
-            });
+                        // Clear fields after successful entry
+                        editTextAmount.setText("");
+                        editTextDate.setText("");
+                        spinnerActivity.setSelection(0); // Set default selection for spinner
+                        spinnerMetric.setSelection(0); // Set default selection for spinner
+                    } else {
+                        // Handle unsuccessful entry
+                        Toast.makeText(requireContext(), "Failed to add Personal Goal!", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
+
 
     // Method to format the date string
     private String formatDate(String date) {

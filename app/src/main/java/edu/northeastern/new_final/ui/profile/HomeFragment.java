@@ -4,7 +4,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,23 +18,65 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import android.widget.TextView;
+
 import edu.northeastern.new_final.R;
 import edu.northeastern.new_final.ui.logWorkout.LogWorkoutActivity;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel mViewModel;
-
+    private TextView textTotalEP; // TextView to display Total Energy Points
+    private DatabaseReference databaseReference; // Reference to the user in the database
+    String username;
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        username = sharedPreferences.getString("email", null);
 
+        // Ensure we handle the case where the email (username) is null
+        if (username == null) {
+            // Handle the error - perhaps redirect to login screen or show a message
+            return view;
+        }
+
+        String sanitizedUsername = username.replace(".", ",");
+        textTotalEP = view.findViewById(R.id.textView_EPNumber); // Find the TextView by ID
+
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference userEPRef = databaseRef.child("users").child(sanitizedUsername).child("total_EP");
+
+        userEPRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Integer totalEP = dataSnapshot.getValue(Integer.class); // Directly get the value of total_EP
+                    if (totalEP != null) {
+                        textTotalEP.setText(String.valueOf(totalEP)); // Update the TextView
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        return view;
+    }
+    private void updateTotalEPDisplay(int totalEP) {
+        textTotalEP.setText(String.valueOf(totalEP));
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

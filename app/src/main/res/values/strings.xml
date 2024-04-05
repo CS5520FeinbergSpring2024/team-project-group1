@@ -25,7 +25,7 @@
     <string name="button_workouts">Workout History </string>
     <string name="button_logWorkout">+ Log Workout </string>
     <string name="energyPoints_label">Total Energy Points </string>
-    <string name="energyPoints_number">25 </string>
+    <string name="init_energyPoints_number">0 </string>
     <string name="personal_goals">Personal Goals: </string>
 
     <!--    personal goal page-->

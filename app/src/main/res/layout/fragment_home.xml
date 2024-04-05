@@ -87,7 +87,7 @@
             android:id="@+id/textView_EPNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/energyPoints_number"
+            android:text="@string/init_energyPoints_number"
             android:textColor="@color/black"
             android:layout_marginLeft="8dp"
             app:layout_constraintEnd_toEndOf="parent"
