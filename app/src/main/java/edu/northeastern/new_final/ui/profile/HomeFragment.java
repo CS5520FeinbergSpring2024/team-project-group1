@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +51,10 @@ public class HomeFragment extends Fragment {
             return view;
         }
 
-        String sanitizedUsername = username.replace(".", ",");
+        String sanitizedUsername = username.replace(".", "_");
         textTotalEP = view.findViewById(R.id.textView_EPNumber); // Find the TextView by ID
+
+        Log.d("HomeFragment", "Username for Key: " + sanitizedUsername);
 
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference userEPRef = databaseRef.child("users").child(sanitizedUsername).child("total_EP");
@@ -61,6 +64,7 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     Integer totalEP = dataSnapshot.getValue(Integer.class); // Directly get the value of total_EP
+                    Log.d("HomeFragment", "Total EP from database: " + totalEP);
                     if (totalEP != null) {
                         textTotalEP.setText(String.valueOf(totalEP)); // Update the TextView
                     }
