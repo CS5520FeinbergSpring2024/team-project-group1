@@ -1,5 +1,6 @@
 package edu.northeastern.new_final.ui.personalGoal;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -76,22 +78,11 @@ public class PersonalGoalFragment extends Fragment {
         metricAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMetric.setAdapter(metricAdapter);
 
+        editTextDate.setOnClickListener(v -> showDatePickerDialog(editTextDate));
 
 
-        // Check if any of the views are null
-        if (editTextAmount != null && spinnerActivity != null && spinnerMetric != null &&
-                editTextDate != null && buttonAddWorkout != null) {
-            buttonAddWorkout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Call method to add workout to Firebase
-                    addGoalToFirebase();
-                }
-            });
-        } else {
-            // Handle null views here
-            Log.e("PersonalGoalFragment", "One or more XML elements are null");
-        }
+        buttonAddWorkout.setOnClickListener(v -> addGoalToFirebase(editTextAmount, spinnerActivity,
+                spinnerMetric, editTextDate));
 
 
 
@@ -101,12 +92,9 @@ public class PersonalGoalFragment extends Fragment {
 
 
     // Method to add goal to Firebase
-    private void addGoalToFirebase() {
-        // Access XML elements and perform actions
-        EditText editTextAmount = binding.editTextAmount;
-        Spinner spinnerActivity = binding.spinnerActivityActivity;
-        Spinner spinnerMetric = binding.spinnerActivityMetric;
-        EditText editTextDate = binding.editTextDate;
+    private void addGoalToFirebase(EditText editTextAmount, Spinner spinnerActivity,
+                                   Spinner spinnerMetric, EditText editTextDate) {
+
 
         // Get values from UI elements
         String amount = editTextAmount.getText().toString();
@@ -121,11 +109,14 @@ public class PersonalGoalFragment extends Fragment {
             return;
         }
 
+
         // Check if the date string contains a slash character
         if (date.contains("/")) {
             // Format the date string
             date = formatDate(date);
         }
+
+
 
         Map<String, Object> workoutData = new HashMap<>();
         workoutData.put("metric_amount", amount);
@@ -175,6 +166,26 @@ public class PersonalGoalFragment extends Fragment {
         return username + "_" + date + "_" + timestamp;
     }
 
+    private void showDatePickerDialog(EditText editTextDate) {
+        // Current Date
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create DatePickerDialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+
+                    //Set selected date to editText
+                    String selectedDate = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
+                    editTextDate.setText(selectedDate);
+                },
+                year, month, dayOfMonth);
+
+        // Show date picker dialog
+        datePickerDialog.show();
+    }
 
     @Override
     public void onDestroyView() {
