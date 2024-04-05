@@ -1,6 +1,9 @@
 package edu.northeastern.new_final.ui.profile;
 
 import edu.northeastern.new_final.R;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +40,13 @@ public class ProfileFragment extends Fragment {
         final TextView textView = binding.textProfile;
         profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
+        // Retrieve email from shared preferences
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
 
+        // Set email to the textViewUsername
+        TextView textViewUsername = binding.textViewUsername;
+        textViewUsername.setText(email);
 
         //Section helps keep garden image at 2/3 of screen height (shows on emulator)
         // Get display metrics to calculate screen height
