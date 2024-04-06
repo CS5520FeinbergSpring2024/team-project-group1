@@ -77,10 +77,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Integer totalEP = dataSnapshot.getValue(Integer.class); // Directly get the value of total_EP
-                    Log.d("HomeFragment", "Total EP from database: " + totalEP);
+                    Integer totalEP = dataSnapshot.getValue(Integer.class);
                     if (totalEP != null) {
-                        textTotalEP.setText(String.valueOf(totalEP)); // Update the TextView
+                        textTotalEP.setText(String.valueOf(totalEP));
                     }
                 }
             }
