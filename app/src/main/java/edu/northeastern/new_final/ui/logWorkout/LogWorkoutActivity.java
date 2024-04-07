@@ -49,6 +49,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
     private TextView metricLbl;
     private TextView energyPoints;
     private String username;
+    private boolean blockLogWorkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,17 @@ public class LogWorkoutActivity extends AppCompatActivity {
         metricLbl = findViewById(R.id.metricTypeLbl);
         energyPoints = findViewById(R.id.textViewActivityEP);
         activity = "Run";
+        blockLogWorkout = false;
+
+        Calendar calendar = Calendar.getInstance();
+        int initialYear = calendar.get(Calendar.YEAR);
+        int initialMonth = calendar.get(Calendar.MONTH);
+        int initialDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Set default day to today
+        String initialDate = initialYear + "-" + (initialMonth + 1) + "-" + initialDayOfMonth;
+        dateEntry.setText(initialDate);
+        date = initialDate;
 
         databaseRef = FirebaseDatabase.getInstance().getReference("users");
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
@@ -95,8 +107,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String epDisplay = checkUpdateEP();
-                energyPoints.setText(epDisplay);
+                updateEnergyPoints();
             }
 
             @Override
@@ -115,8 +126,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
             timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
             amountCategory = "distance";
             metricLbl.setText("miles");
-            String epDisplay = checkUpdateEP();
-            energyPoints.setText(epDisplay);
+            updateEnergyPoints();
         });
 
         timeToggleButton.setOnClickListener(v -> {
@@ -130,8 +140,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
             distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
             amountCategory = "time";
             metricLbl.setText("min");
-            String epDisplay = checkUpdateEP();
-            energyPoints.setText(epDisplay);
+            updateEnergyPoints();
         });
 
 
@@ -142,7 +151,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
             amount = !amountStr.equals("") ? Double.parseDouble(amountStr) : -1;
             date = dateEntry.getText().toString().trim();
 
-            if (amountStr.equals("") || date.isEmpty() || amount < 0 || amount > 300) {
+            if (amountStr.equals("") || date.isEmpty() || amount < 0 || amount > 300 || blockLogWorkout) {
                 Toast.makeText(LogWorkoutActivity.this, "Error: Please fill out all fields", Toast.LENGTH_SHORT).show();
             } else {
                 // All fields are filled, proceed with adding workout
@@ -160,7 +169,6 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
         dateEntry.setOnClickListener(v -> {
             // Get current date
-            Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
@@ -174,7 +182,6 @@ public class LogWorkoutActivity extends AppCompatActivity {
                     },
                     year, month, dayOfMonth);
 
-            // Show DatePickerDialog
             datePickerDialog.show();
         });
 
@@ -184,13 +191,31 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
     }
 
-    private String checkUpdateEP() {
-        String amountStr = amountEditText.getText() != null ? amountEditText.getText().toString().trim() : "";
-        if (amountStr.equals("")) {
-            return "0";
+    private void updateEnergyPoints() {
+        String amountStr = amountEditText.getText().toString().trim();
+        blockLogWorkout = false;
+        if (!amountStr.isEmpty()) {
+            try {
+                double amount = Double.parseDouble(amountStr);
+                energyPoints.setText(String.valueOf(calculateEnergyPoints(amount, amountCategory)));
+                amountEditText.setBackgroundResource(R.drawable.charcoal_outline);
+            } catch (NumberFormatException e) {
+                // Set invalid input style
+                setInvalidInputStyle(amountEditText);
+                Toast.makeText(this, "Error: Please enter a valid number.", Toast.LENGTH_SHORT).show();
+                energyPoints.setText("0");
+                blockLogWorkout = true;
+            }
         } else {
-            return String.valueOf(calculateEnergyPoints(amount, amountCategory));
+            energyPoints.setText("0");
+            // Reset EditText border color to default
+            amountEditText.setBackgroundResource(R.drawable.charcoal_outline);
+            blockLogWorkout = true;
         }
+    }
+
+    private void setInvalidInputStyle(EditText editText) {
+        editText.setBackgroundResource(R.drawable.invalid_input_outline);
     }
 
     private int calculateEnergyPoints(double amount, String amountCategory) {

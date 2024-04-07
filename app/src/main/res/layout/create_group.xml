@@ -116,40 +116,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dueDateLbl" />
 
-    <Button
-        android:id="@+id/buttonAddGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@android:color/transparent"
-        android:background="@drawable/button_style"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        android:text="@string/add_group"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/buttonCancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/buttonCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/cancel"
-        android:textColor="@android:color/holo_blue_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <ToggleButton
         android:id="@+id/toggleButtonTime"
-        android:layout_width="55dp"
-        android:layout_height="41dp"
+        android:layout_width="51dp"
+        android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="64dp"
@@ -164,15 +135,15 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintHorizontal_bias="0.898"
         app:layout_constraintStart_toEndOf="@+id/editTextAmount"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAmount"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewGoalLbl"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ToggleButton
         android:id="@+id/toggleButtonDistance"
-        android:layout_width="70dp"
-        android:layout_height="39dp"
+        android:layout_width="74dp"
+        android:layout_height="42dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="64dp"
         android:layout_weight="1"
@@ -188,13 +159,13 @@
         app:layout_constraintEnd_toStartOf="@+id/toggleButtonTime"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/spinnerWorkoutType"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAmount"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGoalLbl"
         app:layout_constraintVertical_bias="0.282" />
 
     <ToggleButton
         android:id="@+id/toggleButtonEP"
         android:layout_width="66dp"
-        android:layout_height="41dp"
+        android:layout_height="42dp"
         android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:background="@drawable/toggle_button_border"
@@ -210,7 +181,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/toggleButtonDistance"
         app:layout_constraintTop_toBottomOf="@+id/textViewGoalLbl"
-        app:layout_constraintVertical_bias="0.098" />
+        app:layout_constraintVertical_bias="0.028" />
 
     <Button
         android:id="@+id/uploadImgBtn"
@@ -247,17 +218,49 @@
         app:layout_constraintTop_toBottomOf="@id/editGroupName" />
 
     <Button
+        android:id="@+id/buttonAddGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_style"
+        android:backgroundTint="@android:color/transparent"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/add_group"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/buttonCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/cancel"
+        android:textColor="@android:color/holo_blue_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/AddGroupMembersBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_members"
+        android:layout_marginStart="16dp"
         android:background="@drawable/button_style"
         android:backgroundTint="@android:color/transparent"
+        android:text="@string/add_members"
         app:layout_constraintBottom_toTopOf="@+id/buttonAddGroup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.07"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateEditText"
         app:layout_constraintVertical_bias="0.295" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
