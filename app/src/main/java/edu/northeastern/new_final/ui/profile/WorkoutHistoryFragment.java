@@ -65,6 +65,7 @@ public class WorkoutHistoryFragment extends Fragment {
         adapter = new HistoricalWorkoutAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
+
         // Get reference to the user's workout history in the database
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference historicalWorkoutsReference = FirebaseDatabase.getInstance().getReference()
