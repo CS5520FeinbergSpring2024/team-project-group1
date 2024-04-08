@@ -94,11 +94,18 @@ public class WorkoutHistoryFragment extends Fragment {
                     Log.d("Workout History", "Energy Points: " + energyPoints);
 
                     // Update metric label
-                    if (amountCategory == "distance") {
+                    if (amountCategory.equals("distance")) {
                         amountCategory = "miles";
                     } else {
                         amountCategory = "min.";
                     }
+
+                    // Update activity label
+                    if (activity.equals("Calisthenics")) {
+                        activity = "Walk";
+                    }
+
+
 
                     // Add "ep"
                     energyPoints = energyPoints + "ep";
