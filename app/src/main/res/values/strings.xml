@@ -27,6 +27,9 @@
     <string name="energyPoints_label">Total Energy Points </string>
     <string name="init_energyPoints_number">0 </string>
     <string name="personal_goals">Personal Goals: </string>
+    <string name="no_workouts">No Workout History. Log some workouts to get started!</string>
+    <string name="no_goals">No Personal Goals. Set some Personal Goals to get started!</string>
+    <string name="no_groups">No Challenge Groups. Join a Challenge Group to get started!</string>
 
     <!--    personal goal page-->
     <string name="pg_title">Add a Personal Goal </string>

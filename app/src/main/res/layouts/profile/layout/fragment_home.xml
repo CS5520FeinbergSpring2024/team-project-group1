@@ -112,12 +112,30 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/personal_goal_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_personalGoals"
+        app:layout_constraintBottom_toBottomOf="parent"
  />
+
+    <TextView
+        android:id="@+id/textViewNoGoals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="14dp"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        android:text="@string/no_goals"
+        app:layout_constraintTop_toBottomOf="@id/textView_personalGoals"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+
+
+        />
 
 
 

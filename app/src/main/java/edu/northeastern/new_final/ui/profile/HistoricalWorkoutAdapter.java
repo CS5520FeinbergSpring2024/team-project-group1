@@ -34,6 +34,14 @@ public class HistoricalWorkoutAdapter extends RecyclerView.Adapter<HistoricalWor
         // Bind data to each ViewHolder
         HistoricalWorkout historicalWorkout = historicalWorkoutList.get(position);
         holder.bind(historicalWorkout);
+
+        // Check if the activity is "Run" and set the appropriate icon
+        if ("Run".equals(historicalWorkout.getActivity())) {
+            holder.activityIcon.setImageResource(R.drawable.run_icon);
+        } else {
+            // Set a default icon if the activity is not "Run"
+            holder.activityIcon.setImageResource(R.drawable.walk_icon);
+        }
     }
 
     @Override

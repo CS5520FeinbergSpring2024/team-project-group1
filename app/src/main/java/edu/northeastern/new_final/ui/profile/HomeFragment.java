@@ -43,6 +43,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private PersonalGoalAdapter adapter;
 
+    private TextView textViewNoGoals;
+
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -62,6 +64,7 @@ public class HomeFragment extends Fragment {
         String sanitizedUsername = username.replace(".", "_");
         textTotalEP = view.findViewById(R.id.textView_EPNumber); // Find the TextView by ID
 
+        textViewNoGoals = view.findViewById(R.id.textViewNoGoals);
 
         // Initialize RecyclerView and Adapter
         recyclerView = view.findViewById(R.id.personal_goal_recycler);
@@ -119,11 +122,22 @@ public class HomeFragment extends Fragment {
                     personalGoalsList.add(personalGoal);
 
 
-
-
-                    //personalGoalsList.add(personalGoal);
                 }
-                adapter.setPersonalGoalsList(personalGoalsList);
+
+                //Check if list is empty
+                if (personalGoalsList.isEmpty()) {
+
+                    textViewNoGoals.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else{
+                    // Hide the message and show the RecyclerView
+                    textViewNoGoals.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    adapter.setPersonalGoalsList(personalGoalsList);
+                }
+
+
             }
 
             @Override

@@ -3,6 +3,7 @@ package edu.northeastern.new_final.ui.profile;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import edu.northeastern.new_final.R;
 
@@ -15,10 +16,13 @@ public class HistoricalWorkoutViewHolder extends RecyclerView.ViewHolder {
     TextView date;
     TextView energyPoints;
 
+    ImageView activityIcon;
+
     public HistoricalWorkoutViewHolder(@NonNull View itemView) {
         super(itemView);
 
         //initialize views
+        activityIcon = itemView.findViewById(R.id.activityIcon);
         activity = itemView.findViewById(R.id.activityType);
         amount = itemView.findViewById(R.id.amount);
         amountCategory = itemView.findViewById(R.id.metric);
