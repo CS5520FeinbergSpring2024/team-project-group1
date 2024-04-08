@@ -38,6 +38,7 @@ public class WorkoutHistoryFragment extends Fragment {
     String username;
     private RecyclerView recyclerView;
     private HistoricalWorkoutAdapter adapter;
+    private TextView textViewNoHistory;
 
     public static WorkoutHistoryFragment newInstance() {
         return new WorkoutHistoryFragment();
@@ -58,6 +59,8 @@ public class WorkoutHistoryFragment extends Fragment {
         }
 
         String sanitizedUsername = username.replace(".", "_");
+
+        textViewNoHistory = view.findViewById(R.id.textViewNoHistory);
 
         // Initialize RecyclerView and Adapter
         recyclerView = view.findViewById(R.id.rv_workouts);
@@ -114,8 +117,19 @@ public class WorkoutHistoryFragment extends Fragment {
                     HistoricalWorkout historicalWorkout = new HistoricalWorkout(activity, date, amount, amountCategory, energyPoints);
                     historicalWorkoutList.add(historicalWorkout);
 
+
+                    //Check if list is empty
+                    if (historicalWorkoutList.isEmpty()) {
+
+                        textViewNoHistory.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else{
+                    // Hide the message and show the RecyclerView
+                    textViewNoHistory.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    adapter.setHistoricalWorkoutList(historicalWorkoutList); }
                 }
-                adapter.setHistoricalWorkoutList(historicalWorkoutList);
             }
 
             @Override
