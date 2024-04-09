@@ -1,5 +1,6 @@
 package edu.northeastern.new_final.ui.profile;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import edu.northeastern.new_final.R;
+import edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupMain;
 
 public class GroupAdapter  extends RecyclerView.Adapter<GroupViewHolder> {
 
@@ -33,6 +35,17 @@ public class GroupAdapter  extends RecyclerView.Adapter<GroupViewHolder> {
         // Bind data to each ViewHolder
         Group group = groupList.get(position);
         holder.bind(group);
+
+        //Add OnClickListener to each card
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Start new activity for the selected group
+                Intent intent = new Intent(v.getContext(), ChallengeGroupMain.class);
+                intent.putExtra("groupName", group.getGroupName());
+                v.getContext().startActivity(intent);
+            }
+        });
 
     }
 
