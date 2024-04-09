@@ -29,6 +29,12 @@
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.New_final.NoActionBar"></activity>
+
+        <activity
+            android:name=".ui.challengeGroup.ChallengeGroupMain"
+            android:exported="true"
+            android:theme="@style/Theme.New_final.NoActionBar" />
+
     </application>
 
 </manifest>
