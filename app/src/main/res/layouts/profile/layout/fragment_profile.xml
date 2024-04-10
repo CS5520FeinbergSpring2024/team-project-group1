@@ -30,7 +30,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/daisy_img" />
 
-
     <!-- Profile picture -->
     <FrameLayout
         android:id="@+id/profile_FV"
@@ -50,9 +49,7 @@
         android:elevation="2dp"
         tools:ignore="ContentDescription" />
 
-
     </FrameLayout>
-
     <!-- Thin separator line (sits below garden image) -->
     <View
         android:id="@+id/separator"

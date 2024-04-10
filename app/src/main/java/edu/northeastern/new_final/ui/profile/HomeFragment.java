@@ -26,6 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -42,9 +44,10 @@ public class HomeFragment extends Fragment {
     String username;
     private RecyclerView recyclerView;
     private PersonalGoalAdapter adapter;
+    private ProgressBar energyProgressBar;
 
     private TextView textViewNoGoals;
-
+    private final int nextLevelThreshold = 30;
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -65,7 +68,7 @@ public class HomeFragment extends Fragment {
         textTotalEP = view.findViewById(R.id.textView_EPNumber); // Find the TextView by ID
 
         textViewNoGoals = view.findViewById(R.id.textViewNoGoals);
-
+        energyProgressBar = view.findViewById(R.id.energyProgressBar);
         // Initialize RecyclerView and Adapter
         recyclerView = view.findViewById(R.id.personal_goal_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -83,6 +86,7 @@ public class HomeFragment extends Fragment {
                     Integer totalEP = dataSnapshot.getValue(Integer.class);
                     if (totalEP != null) {
                         textTotalEP.setText(String.valueOf(totalEP));
+                        updateProgressBar(totalEP);
                     }
                 }
             }
@@ -158,6 +162,34 @@ public class HomeFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
+    private void updateProgressBar(int currentEnergyPoints) {
+        // Initialize variables for progress calculation
+        int progressPercentage = 0;
+        int stageMax = 0;
+        int stageMin = 0;
+
+        // Determine the stage and calculate the progress percentage accordingly
+        if (currentEnergyPoints >= 0 && currentEnergyPoints <= 30) {
+            stageMin = 0;
+            stageMax = 30;
+        } else if (currentEnergyPoints > 30 && currentEnergyPoints <= 100) {
+            stageMin = 30;
+            stageMax = 100;
+        } else if (currentEnergyPoints > 100 && currentEnergyPoints <= 300) {
+            stageMin = 100;
+            stageMax = 300;
+        } else if (currentEnergyPoints > 300) {
+            stageMin = 300;
+            // Assuming 500 as the max value for the last stage for calculation, adjust as necessary
+            stageMax = 500;
+        }
+
+        // Calculate progress within the current stage
+        progressPercentage = (int) (((currentEnergyPoints - stageMin) / (float) (stageMax - stageMin)) * 100);
+
+        // Set the progress on the ProgressBar
+        energyProgressBar.setProgress(progressPercentage);
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
