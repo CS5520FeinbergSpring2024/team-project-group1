@@ -88,6 +88,18 @@
         app:layout_constraintTop_toBottomOf="@id/spinnerWorkoutType" />
 
     <TextView
+        android:id="@+id/metricTypeLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/editTextAmount"
+        app:layout_constraintEnd_toEndOf="@+id/editTextAmount"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextAmount"
+        app:layout_constraintTop_toTopOf="@+id/editTextAmount" />
+
+    <TextView
         android:id="@+id/dueDateLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,11 +131,8 @@
 
     <ToggleButton
         android:id="@+id/toggleButtonTime"
-        android:layout_width="51dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="64dp"
+        android:layout_width="52dp"
+        android:layout_height="44dp"
         android:layout_weight="1"
         android:background="@drawable/toggle_button_border"
         android:checked="false"
@@ -135,10 +144,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/dueDateLbl"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.898"
-        app:layout_constraintStart_toEndOf="@+id/editTextAmount"
+        app:layout_constraintHorizontal_bias="0.859"
+        app:layout_constraintStart_toEndOf="@+id/toggleButtonEP"
         app:layout_constraintTop_toBottomOf="@+id/textViewGoalLbl"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ToggleButton
         android:id="@+id/toggleButtonDistance"
@@ -166,7 +175,6 @@
         android:id="@+id/toggleButtonEP"
         android:layout_width="66dp"
         android:layout_height="42dp"
-        android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:background="@drawable/toggle_button_border"
         android:checked="true"
@@ -181,7 +189,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/toggleButtonDistance"
         app:layout_constraintTop_toBottomOf="@+id/textViewGoalLbl"
-        app:layout_constraintVertical_bias="0.028" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/uploadImgBtn"
@@ -224,6 +232,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
+        android:windowSoftInputMode="adjustNothing"
         android:background="@drawable/button_style"
         android:backgroundTint="@android:color/transparent"
         android:paddingStart="16dp"
@@ -241,6 +250,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
+        android:windowSoftInputMode="adjustNothing"
         android:text="@string/cancel"
         android:textColor="@android:color/holo_blue_dark"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -252,6 +262,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:windowSoftInputMode="adjustNothing"
         android:background="@drawable/button_style"
         android:backgroundTint="@android:color/transparent"
         android:text="@string/add_members"
