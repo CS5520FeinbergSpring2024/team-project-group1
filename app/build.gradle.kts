@@ -53,6 +53,9 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.1")
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-storage:latest_version")
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -43,7 +43,7 @@
         android:id="@+id/imageView_profile"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/roadrunner_img"
+        android:src="@drawable/default_user_profile"
         android:scaleType="centerCrop"
         android:padding="8dp"
         android:elevation="2dp"

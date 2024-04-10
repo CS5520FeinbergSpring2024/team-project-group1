@@ -1,10 +1,16 @@
 package edu.northeastern.new_final.ui.profile;
 
+import edu.northeastern.new_final.CircularImageView;
 import edu.northeastern.new_final.R;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +25,17 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
@@ -34,7 +46,9 @@ public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
     private FragmentContainerView fragmentContainer;
+    private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
 
+    private static final int PICK_IMAGE = 123;
     String username;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -97,12 +111,7 @@ public class ProfileFragment extends Fragment {
             buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
         });
 
-        buttonWorkouts.setOnClickListener(v -> {
-            loadFragment(new WorkoutHistoryFragment());
-            buttonHome.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
-            buttonGroups.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
-            buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.purple_pastel));
-        });
+
 
 
 
@@ -140,20 +149,79 @@ public class ProfileFragment extends Fragment {
                 // Handle error case
                 Log.w("TAG", "loadTotalEP:onCancelled", databaseError.toException());
             }
+
+            CircularImageView profileImageView = binding.imageViewProfile;
+
         });
-
-
-
-
-
-
-
 
 
 
         return root;
     }
 
+    private void openImageSelector() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_STORAGE);
+        } else {
+            // Permission has already been granted, open the image selector.
+            selectImage();
+        }
+    }
+
+    private void selectImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST_READ_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, open the image selector.
+                selectImage();
+            } else {
+                // Permission denied, show an explanatory message or UI.
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            // Use the Uri to load the image into your ImageView. You might want to use a library like Glide or Picasso.
+            Glide.with(this).load(imageUri).into(binding.imageViewProfile);
+            // Now upload the image to Firebase Storage
+            uploadImageToFirebaseStorage(imageUri);
+        }
+    }
+
+    private void uploadImageToFirebaseStorage(Uri imageUri) {
+        if (imageUri != null) {
+            StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profile_images/" + System.currentTimeMillis() + ".jpg");
+
+            profileImageRef.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri downloadUri) {
+                                    Log.d("ProfileFragment", "Image upload successful. URL: " + downloadUri.toString());
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.d("ProfileFragment", "Image upload failed: " + exception.getMessage());
+                        }
+                    });
+        }
+    }
 
     private void loadFragment(Fragment fragment) {
         Log.d("ProfileFragment", "Loading fragment: " + fragment.getClass().getSimpleName());
