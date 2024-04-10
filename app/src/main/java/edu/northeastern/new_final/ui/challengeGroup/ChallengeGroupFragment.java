@@ -1,9 +1,11 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -21,18 +23,25 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.new_final.R;
 import edu.northeastern.new_final.databinding.FragmentChallengeGroupBinding;
+import edu.northeastern.new_final.ui.LoginActivity;
+import edu.northeastern.new_final.ui.logWorkout.Workout;
 
 
 public class ChallengeGroupFragment extends Fragment {
-    private FragmentChallengeGroupBinding binding;
-    private ChallengeGroupViewModel challengeGroupViewModel;
     private EditText groupNameEditText;
     private EditText amountEditText;
     private EditText dateEditText;
@@ -50,8 +59,6 @@ public class ChallengeGroupFragment extends Fragment {
     private DatabaseReference databaseRef;
 
     private boolean blockAddGroup;
-    private static final int REQUEST_CODE_PICK_IMAGE = 1001;
-    private static final int REQUEST_CODE_PERMISSION_STORAGE = 1002;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -70,7 +77,8 @@ public class ChallengeGroupFragment extends Fragment {
         description = root.findViewById(R.id.longResponseEditText);
         uploadImgBtn = root.findViewById(R.id.uploadImgBtn);
         blockAddGroup = false;
-        //metricLbl = root.findViewById(R.id.metricTypeLbl);
+        metricLbl = root.findViewById(R.id.metricTypeLbl);
+
 
         // Initialize with distance selected
         distanceToggleButton.setChecked(true);
@@ -80,7 +88,7 @@ public class ChallengeGroupFragment extends Fragment {
         timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
         energyPointsToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
         amountCategory = "distance";
-        //metricLbl.setText("miles");
+        metricLbl.setText("miles");
 
         // Populate activity spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
@@ -89,13 +97,29 @@ public class ChallengeGroupFragment extends Fragment {
         workoutType.setAdapter(adapter);
 
         // Get database ref
-        databaseRef = FirebaseDatabase.getInstance().getReference("users");
+        databaseRef = FirebaseDatabase.getInstance().getReference("groups");
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("email", null);
         username = username.replace(".", "_").replace("#", "_")
                 .replace("$", "_").replace("[", "_").replace("]", "_");
 
         // Set listeners
+        groupNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                groupNameEditText.setBackgroundResource(R.drawable.charcoal_outline);
+            }
+        });
         amountEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -115,22 +139,84 @@ public class ChallengeGroupFragment extends Fragment {
             showDatePickerDialog();
         });
 
+        distanceToggleButton.setOnClickListener(v -> {
+            if (!distanceToggleButton.isChecked()) {
+                distanceToggleButton.setChecked(true);
+            }
+            if (timeToggleButton.isChecked() || energyPointsToggleButton.isChecked()) {
+                timeToggleButton.setChecked(false);
+                energyPointsToggleButton.setChecked(false);
+            }
+            distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
+            energyPointsToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            amountCategory = "distance";
+            metricLbl.setText("miles");
+        });
+
+        timeToggleButton.setOnClickListener(v -> {
+            if (!timeToggleButton.isChecked()) {
+                timeToggleButton.setChecked(true);
+            }
+            if (distanceToggleButton.isChecked() || energyPointsToggleButton.isChecked()) {
+                distanceToggleButton.setChecked(false);
+                energyPointsToggleButton.setChecked(false);
+            }
+            timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
+            energyPointsToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            amountCategory = "time";
+            metricLbl.setText("min");
+        });
+
+        energyPointsToggleButton.setOnClickListener(v -> {
+            if (!energyPointsToggleButton.isChecked()) {
+                energyPointsToggleButton.setChecked(true);
+            }
+            if (distanceToggleButton.isChecked() || timeToggleButton.isChecked()) {
+                distanceToggleButton.setChecked(false);
+                timeToggleButton.setChecked(false);
+            }
+            timeToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            energyPointsToggleButton.setBackgroundResource(R.drawable.toggle_button_border);
+            distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
+            amountCategory = "ep";
+            metricLbl.setText("pts");
+        });
+
         addGroupButton.setOnClickListener(v -> {
             // Check if any of the fields are empty
             String groupName = groupNameEditText.getText().toString().trim();
+            String groupProfileImg = "imgpathhere";
             String amountStr = amountEditText.getText().toString().trim();
             String date = dateEditText.getText().toString().trim();
+            String descriptionResponse = description.getText().toString().trim();
+            String activityType = workoutType.getSelectedItem().toString();
+            ArrayList<String> members = new ArrayList<>();
+            members.add(username);
 
-            if (groupName.isEmpty() || amountStr.isEmpty() || date.isEmpty() || blockAddGroup) {
+            if (groupName.isEmpty() || groupName.equals("") || groupName.equals(" ") || amountStr.isEmpty() || date.isEmpty() || blockAddGroup) {
                 Toast.makeText(getContext(), "Error: Please fill out all fields", Toast.LENGTH_SHORT).show();
             } else {
-                // All fields are filled, proceed with adding group
-                // Your code to add the group goes here
+                // All fields are filled, proceed with adding workout
+                ChallengeGroup newGroup = new ChallengeGroup(
+                        groupName,
+                        descriptionResponse,
+                        groupProfileImg,
+                        activityType,
+                        amountStr,
+                        amountCategory,
+                        date,
+                        members);
+                new Thread(() -> {
+                    Looper.prepare();
+                    addGroupToDatabase(newGroup);
+                    Looper.loop();
+                }).start();
             }
         });
 
         cancelButton.setOnClickListener(v -> {
-            // Handle cancel button click
         });
 
 
@@ -180,10 +266,40 @@ public class ChallengeGroupFragment extends Fragment {
         datePickerDialog.show();
     }
 
+    private void addGroupToDatabase(ChallengeGroup newGroup) {
+        DatabaseReference groupRef = databaseRef.child(newGroup.getGroupName());
+        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Group name already exists
+                    Toast.makeText(getContext(), "Group Name already in use.",
+                            Toast.LENGTH_SHORT).show();
+                    setInvalidInputStyle(groupNameEditText);
+                } else {
+                    groupRef.setValue(newGroup)
+                            .addOnCompleteListener((Activity) requireContext(), task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "Group added successfully!",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Failed to add group" + Objects.requireNonNull(task.getException()).getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 }
