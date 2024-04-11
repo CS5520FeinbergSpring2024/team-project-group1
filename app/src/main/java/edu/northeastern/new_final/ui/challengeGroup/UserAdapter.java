@@ -1,5 +1,6 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private List<String> userList;
     private List<String> selectedUsers;
 
+    private String currentUser;
 
-    public UserAdapter(List<String> userList) {
+    private SelectionChangeListener selectionChangeListener;
+
+
+
+    // Interface to notify selection changes
+    public interface SelectionChangeListener {
+        void onSelectionChanged();
+    }
+
+
+    public UserAdapter(List<String> userList, String currentUser, SelectionChangeListener listener) {
         this.userList = userList;
         this.selectedUsers = new ArrayList<>();
-
+        this.currentUser = currentUser;
+        this.selectionChangeListener = listener;
     }
+
+
 
     @NonNull
     @Override
@@ -37,12 +52,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
         holder.bind(user);
 
 
-        // Set selected state
-        holder.itemView.setSelected(selectedUsers.contains(user));
+        // Set selection state
+        boolean isSelected = selectedUsers.contains(user);
+        holder.setSelected(isSelected);
 
         // Toggle selection on click
         holder.itemView.setOnClickListener(v -> {
             toggleSelection(user);
+
+
+            boolean newSelectedState = selectedUsers.contains(user);
+            holder.setSelected(newSelectedState);
+
+            // Notify adapter of data set change
             notifyItemChanged(position);
         });
     }
@@ -67,6 +89,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
             selectedUsers.remove(user);
         } else {
             selectedUsers.add(user);
+        }
+
+        // Notify selection change
+        if (selectionChangeListener != null) {
+            selectionChangeListener.onSelectionChanged();
         }
     }
 
