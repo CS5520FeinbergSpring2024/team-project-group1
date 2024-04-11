@@ -15,6 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.northeastern.new_final.R;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +31,10 @@ public class FindUsersDialogFragment extends DialogFragment {
     private RecyclerView usersRecyclerView;
     private UserAdapter userAdapter;
 
-    // Dummy list of users (replace with your actual data)
+
     private List<String> userList = new ArrayList<>();
 
-
+    private DatabaseReference usersRef;
 
     @Nullable
     @Override
@@ -45,21 +51,12 @@ public class FindUsersDialogFragment extends DialogFragment {
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         usersRecyclerView.setAdapter(userAdapter);
 
-        // Dummy list of users
-        userList.add("User 1");
-        userList.add("User 2");
-        userList.add("User 3");
-        userList.add("User 4");
-        userList.add("User 5");
-        userList.add("User 6");
-        userList.add("User 7");
-        userList.add("User 8");
-        userList.add("User 9");
-        userList.add("User 10");
-        userList.add("User 11");
 
-        // Notify the adapter that the data set has changed
-        userAdapter.notifyDataSetChanged();
+
+        // Call firebase method
+        fetchUserList();
+
+
 
         // Search button click listener
         searchButton.setOnClickListener(v -> {
@@ -73,5 +70,29 @@ public class FindUsersDialogFragment extends DialogFragment {
 
         return view;
     }
+
+    private void fetchUserList() {
+        // Initialize Firebase Database reference
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+
+        // Retrieve user data from Firebase
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String username = userSnapshot.getKey(); // Get the username from the Firebase snapshot
+                    userList.add(username); // Add the username to the userList
+                }
+                userAdapter.notifyDataSetChanged(); // Notify the adapter of data set change
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+                Toast.makeText(getActivity(), "Failed to retrieve users: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
 
