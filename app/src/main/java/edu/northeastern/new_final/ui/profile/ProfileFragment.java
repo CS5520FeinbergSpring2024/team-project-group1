@@ -111,6 +111,13 @@ public class ProfileFragment extends Fragment {
             buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
         });
 
+        buttonWorkouts.setOnClickListener(v -> {
+            loadFragment(new WorkoutHistoryFragment());
+            buttonHome.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+            buttonGroups.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
+            buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.purple_pastel));
+        });
+
         loadUserProfileImage();
 
         CircularImageView profileImageView = binding.imageViewProfile;

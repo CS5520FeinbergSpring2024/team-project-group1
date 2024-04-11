@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import edu.northeastern.new_final.R;
@@ -60,6 +62,8 @@ public class ChallengeGroupFragment extends Fragment {
 
     private boolean blockAddGroup;
 
+    private Button addMembersBtn;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.create_group, container, false);
@@ -78,6 +82,8 @@ public class ChallengeGroupFragment extends Fragment {
         uploadImgBtn = root.findViewById(R.id.uploadImgBtn);
         blockAddGroup = false;
         metricLbl = root.findViewById(R.id.metricTypeLbl);
+        addMembersBtn = root.findViewById(R.id.AddGroupMembersBtn);
+
 
 
         // Initialize with distance selected
@@ -184,6 +190,14 @@ public class ChallengeGroupFragment extends Fragment {
             metricLbl.setText("pts");
         });
 
+
+        addMembersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFindUsersDialog();
+            }
+        });
+
         addGroupButton.setOnClickListener(v -> {
             // Check if any of the fields are empty
             String groupName = groupNameEditText.getText().toString().trim();
@@ -194,6 +208,14 @@ public class ChallengeGroupFragment extends Fragment {
             String activityType = workoutType.getSelectedItem().toString();
             ArrayList<String> members = new ArrayList<>();
             members.add(username);
+
+
+            String username2 = "testUser";
+            members.add(username2);
+
+            // Log the contents of the members ArrayList
+            Log.d("Members", "Members: " + members.toString());
+
 
             if (groupName.isEmpty() || groupName.equals("") || groupName.equals(" ") || amountStr.isEmpty() || date.isEmpty() || blockAddGroup) {
                 Toast.makeText(getContext(), "Error: Please fill out all fields", Toast.LENGTH_SHORT).show();
@@ -277,7 +299,28 @@ public class ChallengeGroupFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
                     setInvalidInputStyle(groupNameEditText);
                 } else {
-                    groupRef.setValue(newGroup)
+
+                    // Convert newGroup to Map (helps add member child nodes)
+                    Map<String, Object> groupValues = new HashMap<>();
+                    groupValues.put("groupName", newGroup.getGroupName());
+                    groupValues.put("description", newGroup.getDescription());
+                    groupValues.put("groupProfileImg", newGroup.getGroupProfileImg());
+                    groupValues.put("activityType", newGroup.getActivityType());
+                    groupValues.put("amount", newGroup.getAmount());
+                    groupValues.put("amountCategory", newGroup.getAmountCategory());
+                    groupValues.put("dueDate", newGroup.getDueDate());
+
+                    // Add members separately (to allow for specific member child nodes)
+                    Map<String, Object> membersMap = new HashMap<>();
+                    for (String member : newGroup.getMembers()) {
+                        membersMap.put(member, true);
+                    }
+                    groupValues.put("members", membersMap);
+
+                    // Update database with the entire newGroup object
+                    groupRef.updateChildren(groupValues)
+
+
                             .addOnCompleteListener((Activity) requireContext(), task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(getContext(), "Group added successfully!",
@@ -297,6 +340,10 @@ public class ChallengeGroupFragment extends Fragment {
 
     }
 
+    private void showFindUsersDialog() {
+        FindUsersDialogFragment dialogFragment = new FindUsersDialogFragment();
+        dialogFragment.show(getChildFragmentManager(), "FindUsersDialog");
+    }
 
     @Override
     public void onDestroyView() {
