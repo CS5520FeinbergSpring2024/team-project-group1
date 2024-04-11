@@ -44,6 +44,9 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
 
     private OnUsersSelectedListener mListener;
 
+    private String searchTerm;
+
+    private TextView clearButton;
     private Button addButton;
     public interface OnUsersSelectedListener {
         void onUsersSelected(List<String> selectedUsers);
@@ -60,6 +63,7 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
         usersRecyclerView = view.findViewById(R.id.usersRecyclerView);
         selectedUsersTV = view.findViewById(R.id.selectedUsersTV);
         addButton = view.findViewById(R.id.addButton);
+        clearButton = view.findViewById(R.id.buttonClear);
 
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         currentUser = sharedPreferences.getString("email", null);
@@ -69,19 +73,25 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         usersRecyclerView.setAdapter(userAdapter);
 
+        searchTerm = "";
         // Call firebase method
-        fetchUserList();
+        fetchUserList(searchTerm);
 
 
 
         // Search button click listener
         searchButton.setOnClickListener(v -> {
-            String searchTerm = searchEditText.getText().toString().trim();
-            // Perform search based on searchTerm
-            // Update userList accordingly
-            // Notify adapter of data set change
-            // For example, you can show a Toast for now
-            Toast.makeText(getActivity(), "Search not implemented yet", Toast.LENGTH_SHORT).show();
+            searchTerm = searchEditText.getText().toString().trim();
+
+
+            fetchUserList(searchTerm);
+        });
+
+        // Clear Search button click listener
+        clearButton.setOnClickListener(v -> {
+            searchTerm = "";
+
+            fetchUserList(searchTerm);
         });
 
 
@@ -96,9 +106,12 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
         return view;
     }
 
-    private void fetchUserList() {
+    private void fetchUserList(String searchTerm) {
         // Initialize Firebase Database reference
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+
+        // Clear the userList before fetching new users
+        userList.clear();
 
         // Retrieve user data from Firebase
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -107,7 +120,10 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String username = userSnapshot.getKey(); // Get the username from the Firebase snapshot
                     if (!username.equals(currentUser)) { // Exclude the current user
-                        userList.add(username); // Add the username to the userList
+                        if (searchTerm.isEmpty() || username.toLowerCase().contains(searchTerm.toLowerCase())) {
+                            // If the search term is empty or matches the username, add it to the userList
+                            userList.add(username);
+                        }
                     }
                 }
                 userAdapter.notifyDataSetChanged(); // Notify the adapter of data set change
