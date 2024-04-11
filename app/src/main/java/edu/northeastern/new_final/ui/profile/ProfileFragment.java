@@ -111,8 +111,16 @@ public class ProfileFragment extends Fragment {
             buttonWorkouts.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.white));
         });
 
+        loadUserProfileImage();
 
-
+        CircularImageView profileImageView = binding.imageViewProfile;
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call the method to open the image selector
+                openImageSelector();
+            }
+        });
 
 
         username = sharedPreferences.getString("email", null);
@@ -158,6 +166,76 @@ public class ProfileFragment extends Fragment {
 
         return root;
     }
+    private void loadUserProfileImage() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        String sanitizedEmail = email.replace(".", "_");
+
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("users");
+        DatabaseReference userRef = databaseRef.child(sanitizedEmail).child("profileImageUrl");
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String profileImageUrl = dataSnapshot.getValue(String.class);
+                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                        // Use Glide to load the image
+                        Glide.with(ProfileFragment.this)
+                                .load(profileImageUrl)
+                                .into(binding.imageViewProfile);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("ProfileFragment", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void uploadImageToFirebaseStorage(Uri imageUri) {
+        if (imageUri != null) {
+            // Assuming you have a way to get the current user's ID or username
+            String userId = username.replace(".", "_");;
+
+            StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profile_images/" + userId + ".jpg");
+
+            profileImageRef.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri downloadUri) {
+                                    Log.d("ProfileFragment", "Image upload successful. URL: " + downloadUri.toString());
+
+                                    // Update the user's profile in the Realtime Database with the image URL
+                                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+                                    userRef.child("profileImageUrl").setValue(downloadUri.toString())
+                                            .addOnCompleteListener(task -> {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("ProfileFragment", "User profile updated with new image URL.");
+                                                } else {
+                                                    Log.e("ProfileFragment", "Failed to update user profile image URL.", task.getException());
+                                                }
+                                            });
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.e("ProfileFragment", "Image upload failed: " + exception.getMessage());
+                        }
+                    });
+        }
+    }
+
+
+
 
     private void openImageSelector() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -198,30 +276,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void uploadImageToFirebaseStorage(Uri imageUri) {
-        if (imageUri != null) {
-            StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profile_images/" + System.currentTimeMillis() + ".jpg");
 
-            profileImageRef.putFile(imageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri downloadUri) {
-                                    Log.d("ProfileFragment", "Image upload successful. URL: " + downloadUri.toString());
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Log.d("ProfileFragment", "Image upload failed: " + exception.getMessage());
-                        }
-                    });
-        }
-    }
 
     private void loadFragment(Fragment fragment) {
         Log.d("ProfileFragment", "Loading fragment: " + fragment.getClass().getSimpleName());
