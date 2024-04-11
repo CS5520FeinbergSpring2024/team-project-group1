@@ -39,6 +39,8 @@
     <string name="pg_durationLabel">Duration (Due Date):</string>
     <string name="pg_buttonLabel">Create Goal</string>
 
+    <!--    Add users page-->
+    <string name="pg_title_users">Add Users</string>
 
     <string-array name="activity_options">
         <item>Run</item>

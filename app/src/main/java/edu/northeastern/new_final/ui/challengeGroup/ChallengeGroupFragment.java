@@ -62,6 +62,8 @@ public class ChallengeGroupFragment extends Fragment {
 
     private boolean blockAddGroup;
 
+    private Button addMembersBtn;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.create_group, container, false);
@@ -80,6 +82,8 @@ public class ChallengeGroupFragment extends Fragment {
         uploadImgBtn = root.findViewById(R.id.uploadImgBtn);
         blockAddGroup = false;
         metricLbl = root.findViewById(R.id.metricTypeLbl);
+        addMembersBtn = root.findViewById(R.id.AddGroupMembersBtn);
+
 
 
         // Initialize with distance selected
@@ -184,6 +188,14 @@ public class ChallengeGroupFragment extends Fragment {
             distanceToggleButton.setBackgroundResource(R.drawable.toggle_button_border_unselected);
             amountCategory = "ep";
             metricLbl.setText("pts");
+        });
+
+
+        addMembersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFindUsersDialog();
+            }
         });
 
         addGroupButton.setOnClickListener(v -> {
@@ -328,6 +340,10 @@ public class ChallengeGroupFragment extends Fragment {
 
     }
 
+    private void showFindUsersDialog() {
+        FindUsersDialogFragment dialogFragment = new FindUsersDialogFragment();
+        dialogFragment.show(getChildFragmentManager(), "FindUsersDialog");
+    }
 
     @Override
     public void onDestroyView() {
