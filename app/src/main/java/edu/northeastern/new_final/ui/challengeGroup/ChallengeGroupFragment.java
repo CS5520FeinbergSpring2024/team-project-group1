@@ -43,7 +43,7 @@ import edu.northeastern.new_final.ui.LoginActivity;
 import edu.northeastern.new_final.ui.logWorkout.Workout;
 
 
-public class ChallengeGroupFragment extends Fragment {
+public class ChallengeGroupFragment extends Fragment implements FindUsersDialogFragment.OnUsersSelectedListener{
     private EditText groupNameEditText;
     private EditText amountEditText;
     private EditText dateEditText;
@@ -60,9 +60,11 @@ public class ChallengeGroupFragment extends Fragment {
     private Button uploadImgBtn;
     private DatabaseReference databaseRef;
 
+    private ArrayList<String> members = new ArrayList<>();
     private boolean blockAddGroup;
 
     private Button addMembersBtn;
+    private TextView membersTV;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -83,6 +85,7 @@ public class ChallengeGroupFragment extends Fragment {
         blockAddGroup = false;
         metricLbl = root.findViewById(R.id.metricTypeLbl);
         addMembersBtn = root.findViewById(R.id.AddGroupMembersBtn);
+        membersTV = root.findViewById(R.id.membersTV);
 
 
 
@@ -206,12 +209,13 @@ public class ChallengeGroupFragment extends Fragment {
             String date = dateEditText.getText().toString().trim();
             String descriptionResponse = description.getText().toString().trim();
             String activityType = workoutType.getSelectedItem().toString();
-            ArrayList<String> members = new ArrayList<>();
+
             members.add(username);
 
 
-            String username2 = "testUser";
-            members.add(username2);
+
+            //String username2 = "testUser";
+            //members.add(username2);
 
             // Log the contents of the members ArrayList
             Log.d("Members", "Members: " + members.toString());
@@ -342,11 +346,34 @@ public class ChallengeGroupFragment extends Fragment {
 
     private void showFindUsersDialog() {
         FindUsersDialogFragment dialogFragment = new FindUsersDialogFragment();
+
+        // Set this fragment as the listener for user selection events
+        dialogFragment.setOnUsersSelectedListener(this);
+
         dialogFragment.show(getChildFragmentManager(), "FindUsersDialog");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    public void onUsersSelected(List<String> selectedUsers) {
+        members.addAll(selectedUsers);
+
+        updateSelectedMembersUI(selectedUsers);
+    }
+
+    private void updateSelectedMembersUI(List<String> selectedUsers) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Selected members:\n");
+        for (int i = 0; i < selectedUsers.size(); i++) {
+            stringBuilder.append(selectedUsers.get(i));
+            if (i < selectedUsers.size() - 1) {
+                // Append comma if not the last user
+                stringBuilder.append(", ");
+            }
+        }
+        membersTV.setText(stringBuilder.toString());
     }
 }

@@ -73,12 +73,12 @@
         android:text="Selected Users: "
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+
+        android:layout_margin="8dp"
         tools:ignore="HardcodedText"
         app:layout_constraintTop_toBottomOf="@id/searchButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -90,6 +90,16 @@
         app:layout_constraintTop_toBottomOf="@id/selectedUsersTV"
 
 />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:backgroundTint="#006838"
+        app:layout_constraintTop_toBottomOf="@id/usersRecyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 
