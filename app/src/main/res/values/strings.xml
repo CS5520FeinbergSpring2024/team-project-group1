@@ -145,7 +145,7 @@
     </string>
     <string name="groupNm">Huskies</string>
     <string name="group_challenge_details">Group Challenge Details</string>
-    <string name="points_lbl">Points </string>
+    <string name="points_lbl">Amount </string>
     <string name="percent_to_goal_lbl">Percent to Goal </string>
     <string name="description_lbl">Description </string>
     <string name="metric_lbl">Metric </string>

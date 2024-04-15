@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,8 @@ public class ChallengeGroupMain extends AppCompatActivity {
     private TextView metricsValueTextView;
     private TextView timeSpanValueTextView;
 
+    private String groupName;
+
     private ImageView leaderboardIcon;
 
     TextView groupNameTextView;
@@ -37,7 +40,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
         setContentView(R.layout.challenge_group);
 
         // Retrieve the group name from intent extras from prev. screen
-        String groupName = getIntent().getStringExtra("groupName");
+        groupName = getIntent().getStringExtra("groupName");
 
         // Initialize Views
         groupNameTextView = findViewById(R.id.groupName);
@@ -64,26 +67,56 @@ public class ChallengeGroupMain extends AppCompatActivity {
             }
         });
 
+        fetchGroupData();
 
-        /*
-        // Retrieve group data from Firebase
+
+    }
+
+
+    private void fetchGroupData() {
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
         groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Retrieve data from dataSnapshot and update views
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                // Retrieve data from snapshots and update views
+                if (snapshot.exists()) {
+                    String description = snapshot.child("description").getValue(String.class);
 
+                    String endDate = snapshot.child("dueDate").getValue(String.class);
+                    String startDate = snapshot.child("createDate").getValue(String.class);
+                    String timeSpan = startDate + " to " + endDate;
 
+                    String metric = snapshot.child("amountCategory").getValue(String.class);
+                    String metricUpdate;
+                    if (metric == "time") {
+                        metricUpdate = "minutes";
+                    } else if (metric == "distance") {
+                        metricUpdate = "miles";
+                    } else {
+                        metricUpdate = "EP";
+                    }
+
+                    Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
+                    String goalAmount = String.valueOf(goalAmountLong);
+                    String fullMetric = goalAmount + " " + metricUpdate;
+
+                    // Update the views with retrieved data
+                    descriptionTextView.setText(description);
+                    metricsValueTextView.setText(fullMetric);
+                    timeSpanValueTextView.setText(timeSpan);
+
+                    //pointsValueTextView.setText(goalAmount);
+
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ChallengeGroupMain.this, "Error retrieving group data.", Toast.LENGTH_SHORT).show();
+
             }
         });
-
-         */
-
     }
+
 }
