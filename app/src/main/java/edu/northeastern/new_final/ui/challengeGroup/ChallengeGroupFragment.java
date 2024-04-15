@@ -30,10 +30,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -304,6 +306,8 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                     setInvalidInputStyle(groupNameEditText);
                 } else {
 
+                    String createDate = getCurrentDate();
+
                     // Convert newGroup to Map (helps add member child nodes)
                     Map<String, Object> groupValues = new HashMap<>();
                     groupValues.put("groupName", newGroup.getGroupName());
@@ -313,6 +317,7 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                     groupValues.put("amount", newGroup.getAmount());
                     groupValues.put("amountCategory", newGroup.getAmountCategory());
                     groupValues.put("dueDate", newGroup.getDueDate());
+                    groupValues.put("createDate", createDate);
 
                     // Add members separately (to allow for specific member child nodes)
                     Map<String, Object> membersMap = new HashMap<>();
@@ -375,5 +380,11 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
             }
         }
         membersTV.setText(stringBuilder.toString());
+    }
+
+    private String getCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        return dateFormat.format(calendar.getTime());
     }
 }
