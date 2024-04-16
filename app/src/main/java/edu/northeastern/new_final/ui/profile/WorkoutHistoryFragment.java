@@ -27,8 +27,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import edu.northeastern.new_final.R;
 
@@ -79,57 +85,7 @@ public class WorkoutHistoryFragment extends Fragment {
         historicalWorkoutsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<HistoricalWorkout> historicalWorkoutList = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                    // Extract values from the snapshot and convert them to strings
-                    String activity = snapshot.child("activity").getValue(String.class);
-                    String date = snapshot.child("date").getValue(String.class);
-                    String amount = String.valueOf(snapshot.child("amount").getValue(Long.class));
-                    String amountCategory = snapshot.child("amountCategory").getValue(String.class);
-                    String energyPoints = String.valueOf(snapshot.child("energyPoints").getValue(Long.class));
-
-                    // Log the extracted values
-                    Log.d("Workout History", "Activity: " + activity);
-                    Log.d("Workout History", "Date: " + date);
-                    Log.d("Workout History", "Amount: " + amount);
-                    Log.d("Workout History", "Amount Category: " + amountCategory);
-                    Log.d("Workout History", "Energy Points: " + energyPoints);
-
-                    // Update metric label
-                    if (amountCategory.equals("distance")) {
-                        amountCategory = "miles";
-                    } else {
-                        amountCategory = "min.";
-                    }
-
-                    // Update activity label
-                    if (activity.equals("Calisthenics")) {
-                        activity = "Walk";
-                    }
-
-
-
-                    // Add "ep"
-                    energyPoints = energyPoints + "ep";
-
-                    // Create a Historical Workout object manually and add it to the list
-                    HistoricalWorkout historicalWorkout = new HistoricalWorkout(activity, date, amount, amountCategory, energyPoints);
-                    historicalWorkoutList.add(historicalWorkout);
-
-
-                    //Check if list is empty
-                    if (historicalWorkoutList.isEmpty()) {
-
-                        textViewNoHistory.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
-                    } else{
-                    // Hide the message and show the RecyclerView
-                    textViewNoHistory.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-
-                    adapter.setHistoricalWorkoutList(historicalWorkoutList); }
-                }
+                fetchHistoryFromDatabase(dataSnapshot);
             }
 
             @Override
@@ -147,6 +103,76 @@ public class WorkoutHistoryFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(WorkoutHistoryViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+    private void fetchHistoryFromDatabase(@NonNull DataSnapshot dataSnapshot) {
+        List<HistoricalWorkout> historicalWorkoutList = new ArrayList<>();
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+            // Extract values from the snapshot and convert them to strings
+            String activity = snapshot.child("activity").getValue(String.class);
+            String date = snapshot.child("date").getValue(String.class);
+            String amount = String.valueOf(snapshot.child("amount").getValue(Long.class));
+            String amountCategory = snapshot.child("amountCategory").getValue(String.class);
+            String energyPoints = String.valueOf(snapshot.child("energyPoints").getValue(Long.class));
+
+            // Log the extracted values
+            Log.d("Workout History", "Activity: " + activity);
+            Log.d("Workout History", "Date: " + date);
+            Log.d("Workout History", "Amount: " + amount);
+            Log.d("Workout History", "Amount Category: " + amountCategory);
+            Log.d("Workout History", "Energy Points: " + energyPoints);
+
+            // Update metric label
+            if (amountCategory.equals("distance")) {
+                amountCategory = "miles";
+            } else {
+                amountCategory = "min.";
+            }
+
+            // Update activity label
+            if (activity.equals("Calisthenics")) {
+                activity = "Walk";
+            }
+
+
+
+            // Add "ep"
+            energyPoints = energyPoints + "ep";
+
+            // Create a Historical Workout object manually and add it to the list
+            HistoricalWorkout historicalWorkout = new HistoricalWorkout(activity, date, amount, amountCategory, energyPoints);
+            historicalWorkoutList.add(historicalWorkout);
+
+            historicalWorkoutList.sort(new Comparator<HistoricalWorkout>() {
+                @Override
+                public int compare(HistoricalWorkout workout1, HistoricalWorkout workout2) {
+                    // Parse the dates and compare them
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    try {
+                        Date date1 = dateFormat.parse(workout1.getDate());
+                        Date date2 = dateFormat.parse(workout2.getDate());
+                        // Compare dates in reverse order to get most recent first
+                        return date2.compareTo(date1);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return 0;
+                }
+            });
+
+            //Check if list is empty
+            if (historicalWorkoutList.isEmpty()) {
+
+                textViewNoHistory.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else{
+                // Hide the message and show the RecyclerView
+                textViewNoHistory.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+
+                adapter.setHistoricalWorkoutList(historicalWorkoutList); }
+        }
     }
 
 }

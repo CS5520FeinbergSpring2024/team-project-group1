@@ -11,10 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.view.View;
-import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;

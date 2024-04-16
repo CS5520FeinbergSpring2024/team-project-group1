@@ -19,21 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/pg_title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/forest_green"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <View
         android:id="@+id/greenStripe"
         android:layout_width="0dp"
@@ -50,20 +35,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Activity"
+        android:text="Activity:"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="#444444"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/greenStripe" />
 
     <Spinner
         android:id="@+id/spinnerActivity_activity"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="258dp"
+        android:layout_height="39dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewActivity" />
 
@@ -72,21 +59,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="@string/pg_metricLabel"
+        android:textColor="#444444"
         android:textStyle="bold"
-        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spinnerActivity_activity" />
 
     <Spinner
         android:id="@+id/spinnerActivity_metric"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="259dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/charcoal_outline"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewMetric" />
 
@@ -95,10 +84,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="@string/pg_amountLabel"
+        android:textColor="#444444"
         android:textStyle="bold"
-        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spinnerActivity_metric" />
 
@@ -106,6 +95,7 @@
     <EditText
         android:id="@+id/editTextAmount"
         android:layout_width="166dp"
+        android:background="@drawable/charcoal_outline"
         android:layout_height="37dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
@@ -121,34 +111,35 @@
         app:layout_constraintTop_toBottomOf="@id/textViewAmount" />
 
 
-
     <TextView
         android:id="@+id/textViewDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="@string/pg_durationLabel"
+        android:textColor="#444444"
         android:textStyle="bold"
-        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextAmount" />
 
     <EditText
         android:id="@+id/editTextDate"
-        android:layout_width="166dp"
-        android:layout_height="37dp"
+        android:layout_width="251dp"
+        android:layout_height="43dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:hint="Enter Date"
+        android:background="@drawable/charcoal_outline"
+        android:drawableEnd="@drawable/calendar_icon"
+        android:focusable="false"
+        android:hint="@string/select_date"
         android:paddingStart="8dp"
-        android:paddingTop="4dp"
+        android:paddingTop="2dp"
         android:paddingEnd="8dp"
-        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewDuration" />
 
 
@@ -157,9 +148,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="12dp"
         android:backgroundTint="#006838"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
@@ -167,18 +157,18 @@
         android:paddingBottom="8dp"
         android:text="@string/pg_buttonLabel"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/buttonCancel"
+        app:layout_constraintBottom_toTopOf="@id/clearButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/buttonCancel"
+        android:id="@+id/clearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Cancel"
+        android:layout_marginBottom="32dp"
+        android:text="@string/clear_fields"
         android:textColor="@android:color/holo_blue_dark"
-        android:visibility="gone"
+        android:windowSoftInputMode="adjustNothing"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

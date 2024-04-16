@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 
 import edu.northeastern.new_final.R;
 import edu.northeastern.new_final.ui.profile.HistoricalWorkoutAdapter;
@@ -64,7 +65,9 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // Fetch data from Firebase
-        fetchContenderData();
+        new Thread(
+                this::fetchContenderData)
+                .start();
 
 
         ImageView challengeMainIcon = findViewById(R.id.icon1);
@@ -100,64 +103,48 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
                 long createDateMillis = convertDateStringToMillis(groupCreateDate);
                 long dueDateMillis = convertDateStringToMillis(groupDueDate);
 
-
                 // Find the members in a given group
                 for (DataSnapshot memberSnapshot : snapshot.child("members").getChildren()) {
                     String memberID = memberSnapshot.getKey();
 
-
                     // Pull user data for the member from "users" node
                     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(memberID);
                     userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                       @Override
-                       public void onDataChange(@NonNull DataSnapshot userSnapshot) {
-                           // Get user data from the snapshot
-                           String username = userSnapshot.child("email").getValue(String.class);
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                            // Get user data from the snapshot
+                            String username = userSnapshot.child("email").getValue(String.class);
+                            String profileImageUrl = userSnapshot.child("profileImageUrl").getValue(String.class);
 
-                           String profileImageUrl = userSnapshot.child("profileImageUrl").getValue(String.class);
+                            // Pull workout history
+                            long totalAmount = 0;
+                            for (DataSnapshot workoutSnapshot : userSnapshot.child("workout_history").getChildren()) {
+                                String workoutDate = workoutSnapshot.child("date").getValue(String.class);
+                                String workoutAmountCategory = workoutSnapshot.child("amountCategory").getValue(String.class);
 
+                                long workoutAmount = groupAmountCategory.equals("ep") ?
+                                        workoutSnapshot.child("energyPoints").getValue(Long.class) :
+                                        workoutSnapshot.child("amount").getValue(Long.class);
 
-                           // Pull workout history
-                           long totalAmount = 0;
-                           for (DataSnapshot workoutSnapshot : userSnapshot.child("workout_history").getChildren()) {
-                               String workoutDate = workoutSnapshot.child("date").getValue(String.class);
-                               String workoutAmountCategory = workoutSnapshot.child("amountCategory").getValue(String.class);
+                                // Convert workout date to milliseconds since the epoch
+                                long workoutDateMillis = convertDateStringToMillis(workoutDate);
 
-                               long workoutAmount = groupAmountCategory.equals("ep") ?
-                                       workoutSnapshot.child("energyPoints").getValue(Long.class) :
-                                       workoutSnapshot.child("amount").getValue(Long.class);
-
-
-                               // Convert workout date to milliseconds since the epoch
-                               long workoutDateMillis = convertDateStringToMillis(workoutDate);
-
-
-
-
-
-                               // If tracking EP for group, include workouts in date range agnostic of distance/time
-                               if (groupAmountCategory.equals("ep")) {
-                                   // Check if the workout falls within the group's date range
-                                   if (workoutDateMillis >= createDateMillis &&
-                                           workoutDateMillis <= dueDateMillis) {
-                                       totalAmount += workoutAmount;
-                                   }
-
-                                   // Else include if date range and amount category are aligned
-                               } else {
-                                   workoutAmount = workoutSnapshot.child("amount").getValue(Long.class);
-
-                                   // Check if the workout falls within the group's date range and has the same amount category
-                                   if (workoutDateMillis >= createDateMillis &&
-                                           workoutDateMillis <= dueDateMillis &&
-                                           groupAmountCategory.equals(workoutAmountCategory)) {
-                                       totalAmount += workoutAmount;
-                                   }
-
-                               }
-
-
-                           }
+                                // If tracking EP for group, include workouts in date range agnostic of distance/time
+                                if (groupAmountCategory.equals("ep")) {
+                                    // Check if the workout falls within the group's date range
+                                    if (workoutDateMillis >= createDateMillis &&
+                                            workoutDateMillis <= dueDateMillis) {
+                                        totalAmount += workoutAmount;
+                                    }
+                                } else {
+                                    // Check if the workout falls within the group's date range and has the same amount category
+                                    if (workoutDateMillis >= createDateMillis &&
+                                            workoutDateMillis <= dueDateMillis &&
+                                            groupAmountCategory.equals(workoutAmountCategory)) {
+                                        totalAmount += workoutAmount;
+                                    }
+                                }
+                            }
 
 
                             // Add amount category to contender's card
@@ -189,6 +176,7 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
                                    return Long.compare(totalAmount2, totalAmount1);
                                }
                            });
+
 
                            // Update RecyclerView with sorted userList
                            adapter.notifyDataSetChanged();
