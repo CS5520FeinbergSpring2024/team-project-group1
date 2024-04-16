@@ -73,6 +73,8 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
     private Button uploadImgBtn;
     private DatabaseReference databaseRef;
 
+    private Uri imageUri = null;
+
     private ArrayList<String> members = new ArrayList<>();
     private boolean blockAddGroup;
 
@@ -80,6 +82,7 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
     private TextView membersTV;
 
     private static final int PICK_IMAGE = 123;
+    private String currentGroupName;
 
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -253,7 +256,7 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                         members);
                 new Thread(() -> {
                     Looper.prepare();
-                    addGroupToDatabase(newGroup);
+                    addGroupToDatabase(newGroup, imageUri);
                     Looper.loop();
                 }).start();
             }
@@ -266,7 +269,14 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         uploadGroupImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             openImageSelector();
+                // Get the group name from the EditText
+                String groupName = groupNameEditText.getText().toString().trim();
+                if (!groupName.isEmpty()) {
+                    openImageSelector(); // Pass the group name to your image selector method
+                } else {
+                    // Handle the case where the group name is empty
+                    Toast.makeText(getContext(), "Please enter a group name.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -297,7 +307,7 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                                     // Update the group's profile image URL in Firebase Database
                                     DatabaseReference groupsRef = FirebaseDatabase.getInstance().getReference("groups");
                                     DatabaseReference groupRef = groupsRef.child(sanitizedGroupName);
-                                    groupRef.child("profileImageUrl").setValue(downloadUri.toString())
+                                    groupRef.child("groupProfileImg").setValue(downloadUri.toString())
                                             .addOnCompleteListener(task -> {
                                                 if (task.isSuccessful()) {
                                                     Log.d("GroupProfile", "Group profile image URL updated successfully.");
@@ -317,7 +327,8 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                     });
         }
     }
-        private void openImageSelector() {
+    private void openImageSelector() {
+        // Store the group name in the class-level variable
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_STORAGE);
         } else {
@@ -333,8 +344,8 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK && data != null) {
             Uri imageUri = data.getData();
 
-            // Prompt or automatically retrieve the group name based on your application's design
-            String groupName = "yourGroupName"; // Make sure this is dynamically retrieved
+            // Retrieve the group name from where you stored it (e.g., EditText or instance variable)
+            String groupName = groupNameEditText.getText().toString().trim(); // Assuming editTextGroupName is accessible
 
             // Now upload the image to Firebase Storage
             uploadGroupImageToFirebaseStorage(imageUri, groupName);
@@ -384,60 +395,76 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         datePickerDialog.show();
     }
 
-    private void addGroupToDatabase(ChallengeGroup newGroup) {
+    private void addGroupToDatabase(ChallengeGroup newGroup, Uri imageUri) {
         DatabaseReference groupRef = databaseRef.child(newGroup.getGroupName());
         groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Group name already exists
-                    Toast.makeText(getContext(), "Group Name already in use.",
-                            Toast.LENGTH_SHORT).show();
-                    setInvalidInputStyle(groupNameEditText);
-                } else {
-
+                if (!dataSnapshot.exists()) {
+                    // Group does not exist, proceed with creation
                     String createDate = getCurrentDate();
 
-                    // Convert newGroup to Map (helps add member child nodes)
                     Map<String, Object> groupValues = new HashMap<>();
                     groupValues.put("groupName", newGroup.getGroupName());
                     groupValues.put("description", newGroup.getDescription());
-                    groupValues.put("groupProfileImg", newGroup.getGroupProfileImg());
                     groupValues.put("activityType", newGroup.getActivityType());
                     groupValues.put("amount", newGroup.getAmount());
                     groupValues.put("amountCategory", newGroup.getAmountCategory());
                     groupValues.put("dueDate", newGroup.getDueDate());
                     groupValues.put("createDate", createDate);
+                    // Initially, you can set the groupProfileImg to a placeholder
+                    groupValues.put("groupProfileImg", "default_placeholder_img_url");
 
-                    // Add members separately (to allow for specific member child nodes)
+                    // Add members
                     Map<String, Object> membersMap = new HashMap<>();
                     for (String member : newGroup.getMembers()) {
                         membersMap.put(member, true);
                     }
                     groupValues.put("members", membersMap);
 
-                    // Update database with the entire newGroup object
-                    groupRef.updateChildren(groupValues)
-
-
-                            .addOnCompleteListener((Activity) requireContext(), task -> {
+                    // Create the new group entry in the database
+                    groupRef.setValue(groupValues).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(getContext(), "Group added successfully!",
                                     Toast.LENGTH_SHORT).show();
+                            if (imageUri != null) {
+                                // After group is successfully added, upload the image
+                                uploadGroupImageToFirebaseStorage(imageUri, newGroup.getGroupName(), groupRef);
+                            }
                         } else {
-                            Toast.makeText(getContext(), "Failed to add group" + Objects.requireNonNull(task.getException()).getMessage(),
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Failed to add group: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    // Group name already exists
+                    Toast.makeText(getContext(), "Group Name already in use.", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-
     }
+
+    private void uploadGroupImageToFirebaseStorage(Uri imageUri, String groupName, DatabaseReference groupRef) {
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("group_images/" + groupName + ".jpg");
+
+        imageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                // Update the group's profile image URL in the database
+                groupRef.child("groupProfileImg").setValue(uri.toString()).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getContext(), "Group image uploaded successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Failed to upload group image: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        }).addOnFailureListener(e -> Toast.makeText(getContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
 
     private void showFindUsersDialog() {
         FindUsersDialogFragment dialogFragment = new FindUsersDialogFragment();

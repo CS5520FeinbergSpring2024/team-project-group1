@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,8 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
     private ImageView leaderboardIcon;
 
+    private ImageView bannerImageView;
+
     TextView groupNameTextView;
 
     @Override
@@ -50,6 +53,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
         metricsValueTextView = findViewById(R.id.metricsValueTextView);
         timeSpanValueTextView = findViewById(R.id.timeSpanValueTextView);
         leaderboardIcon = findViewById(R.id.icon2);
+        bannerImageView = findViewById(R.id.bannerImageView);
 
         // Set Group Name
         groupNameTextView.setText(groupName);
@@ -82,7 +86,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
                 // Retrieve data from snapshots and update views
                 if (snapshot.exists()) {
                     String description = snapshot.child("description").getValue(String.class);
-
+                    String groupProfileImgUrl = snapshot.child("groupProfileImg").getValue(String.class);
                     String endDate = snapshot.child("dueDate").getValue(String.class);
                     String startDate = snapshot.child("createDate").getValue(String.class);
                     String timeSpan = startDate + " to " + endDate;
@@ -96,6 +100,9 @@ public class ChallengeGroupMain extends AppCompatActivity {
                     } else {
                         metricUpdate = "EP";
                     }
+                    Glide.with(ChallengeGroupMain.this)
+                            .load(groupProfileImgUrl)
+                            .into(bannerImageView);
 
                     Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
                     String goalAmount = String.valueOf(goalAmountLong);
