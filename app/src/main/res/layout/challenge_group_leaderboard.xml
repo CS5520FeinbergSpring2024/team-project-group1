@@ -80,10 +80,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/leaderboardRV"
-        android:layout_width="409dp"
-        android:layout_height="478dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="1dp"
         app:layout_constraintBottom_toTopOf="@+id/icon2"
         app:layout_constraintEnd_toEndOf="parent"
