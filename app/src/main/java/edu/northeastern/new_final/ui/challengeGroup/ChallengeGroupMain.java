@@ -19,6 +19,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.northeastern.new_final.R;
@@ -80,6 +84,11 @@ public class ChallengeGroupMain extends AppCompatActivity {
                 this::fetchGroupData)
                 .start();
 
+        new Thread(
+                this::calculateGroupTotalPoints)
+                .start();
+
+
     }
 
 
@@ -138,6 +147,96 @@ public class ChallengeGroupMain extends AppCompatActivity {
         } else {
             Toast.makeText(ChallengeGroupMain.this, "Group name is invalid.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private long convertDateStringToMillis(String dateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US); // Define the date format
+        try {
+            Date date = sdf.parse(dateString); // Parse the date string
+            return date.getTime(); // Get the milliseconds since the epoch
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0; // Return 0 if parsing fails
+        }
+    }
+
+    private void calculateGroupTotalPoints() {
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
+        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                // Get the group details for filtering
+                String groupAmountCategory = snapshot.child("amountCategory").getValue(String.class);
+                String groupCreateDate = snapshot.child("createDate").getValue(String.class);
+                String groupDueDate = snapshot.child("dueDate").getValue(String.class);
+
+                // Convert group dates to milliseconds since the epoch
+                long createDateMillis = convertDateStringToMillis(groupCreateDate);
+                long dueDateMillis = convertDateStringToMillis(groupDueDate);
+
+                // Variable to store the total points
+                final long[] totalPoints = {0};
+
+                // Find the members in a given group
+                for (DataSnapshot memberSnapshot : snapshot.child("members").getChildren()) {
+                    String memberID = memberSnapshot.getKey();
+
+                    // Pull user data for the member from "users" node
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(memberID);
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                            // Pull workout history
+                            long memberTotalAmount = 0;
+                            for (DataSnapshot workoutSnapshot : userSnapshot.child("workout_history").getChildren()) {
+                                String workoutDate = workoutSnapshot.child("date").getValue(String.class);
+                                String workoutAmountCategory = workoutSnapshot.child("amountCategory").getValue(String.class);
+
+                                long workoutAmount = groupAmountCategory.equals("ep") ?
+                                        workoutSnapshot.child("energyPoints").getValue(Long.class) :
+                                        workoutSnapshot.child("amount").getValue(Long.class);
+
+                                // Convert workout date to milliseconds since the epoch
+                                long workoutDateMillis = convertDateStringToMillis(workoutDate);
+
+                                // If tracking EP for group, include workouts in date range agnostic of distance/time
+                                if (groupAmountCategory.equals("ep")) {
+                                    // Check if the workout falls within the group's date range
+                                    if (workoutDateMillis >= createDateMillis &&
+                                            workoutDateMillis <= dueDateMillis) {
+                                        memberTotalAmount += workoutAmount;
+                                    }
+                                } else {
+                                    // Check if the workout falls within the group's date range and has the same amount category
+                                    if (workoutDateMillis >= createDateMillis &&
+                                            workoutDateMillis <= dueDateMillis &&
+                                            groupAmountCategory.equals(workoutAmountCategory)) {
+                                        memberTotalAmount += workoutAmount;
+                                    }
+                                }
+                            }
+
+                            // Add the member's total amount to the running total
+                            totalPoints[0] += memberTotalAmount;
+                            String pointsToRender = String.valueOf(totalPoints[0]);
+
+                            pointsValueTextView.setText(pointsToRender);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("FetchContenderData", "Error group data: " + error.getMessage());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FetchContenderData", "Error fetching group data: " + error.getMessage());
+            }
+        });
     }
 
 }
