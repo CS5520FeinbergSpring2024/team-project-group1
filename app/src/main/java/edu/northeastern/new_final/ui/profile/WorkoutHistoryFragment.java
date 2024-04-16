@@ -85,7 +85,7 @@ public class WorkoutHistoryFragment extends Fragment {
         historicalWorkoutsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                new Thread(() -> fetchHistoryFromDatabase(dataSnapshot)).start();
+                fetchHistoryFromDatabase(dataSnapshot);
             }
 
             @Override
