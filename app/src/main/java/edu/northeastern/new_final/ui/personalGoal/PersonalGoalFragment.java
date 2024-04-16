@@ -33,13 +33,18 @@ import java.util.Map;
 
 import edu.northeastern.new_final.R;
 import edu.northeastern.new_final.databinding.FragmentPersonalGoalBinding;
+import edu.northeastern.new_final.ui.logWorkout.LogWorkoutActivity;
 
 public class PersonalGoalFragment extends Fragment {
 
     private FragmentPersonalGoalBinding binding;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseRef;
 
     String username;
+    private String amount;
+    private String activity;
+    private String metric;
+    private String date;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class PersonalGoalFragment extends Fragment {
         // Retrieve username from shared preferences
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("email", null);
+        databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // Log the username obtained from shared preferences
         Log.d("PersonalGoalFragment", "Username: " + username);
@@ -66,6 +72,18 @@ public class PersonalGoalFragment extends Fragment {
         Spinner spinnerMetric = binding.spinnerActivityMetric;
         EditText editTextDate = binding.editTextDate;
         Button buttonAddWorkout = binding.buttonAddWorkout;
+        activity = "Run";
+        metric = "Miles";
+
+        // Set default day to today
+        Calendar calendar = Calendar.getInstance();
+        int initialYear = calendar.get(Calendar.YEAR);
+        int initialMonth = calendar.get(Calendar.MONTH);
+        int initialDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        String initialDate = initialYear + "-" + (initialMonth + 1) + "-" + initialDayOfMonth;
+        editTextDate.setText(initialDate);
+        date = initialDate;
 
         // Spinner options
         ArrayAdapter<CharSequence> activityAdapter = ArrayAdapter.createFromResource(requireContext(),
@@ -81,42 +99,33 @@ public class PersonalGoalFragment extends Fragment {
         editTextDate.setOnClickListener(v -> showDatePickerDialog(editTextDate));
 
 
-        buttonAddWorkout.setOnClickListener(v -> addGoalToFirebase(editTextAmount, spinnerActivity,
-                spinnerMetric, editTextDate));
-
-
+        buttonAddWorkout.setOnClickListener(v -> {
+            // Execute the task on a new thread
+            new Thread(
+                    () -> addGoalToFirebase(editTextAmount, spinnerActivity, spinnerMetric, editTextDate))
+                    .start();
+        });
 
         return root;
     }
-
-
 
     // Method to add goal to Firebase
     private void addGoalToFirebase(EditText editTextAmount, Spinner spinnerActivity,
                                    Spinner spinnerMetric, EditText editTextDate) {
 
-
         // Get values from UI elements
-        String amount = editTextAmount.getText().toString();
-        String activity = spinnerActivity.getSelectedItem().toString();
-        String metric = spinnerMetric.getSelectedItem().toString();
-        String date = editTextDate.getText().toString(); // Assuming this is where the user enters the date
+        amount = editTextAmount.getText().toString();
+        activity = spinnerActivity.getSelectedItem().toString();
+        metric = spinnerMetric.getSelectedItem().toString();
+        date = editTextDate.getText().toString();
 
         // Check if any field is empty
         if (TextUtils.isEmpty(amount) || TextUtils.isEmpty(date)) {
             // Notify user of empty fields
-            Toast.makeText(requireContext(), "Please fill all fields!", Toast.LENGTH_SHORT).show();
+            requireActivity().runOnUiThread(() ->
+                    Toast.makeText(requireContext(), "Please fill all fields!", Toast.LENGTH_SHORT).show());
             return;
         }
-
-
-        // Check if the date string contains a slash character
-        if (date.contains("/")) {
-            // Format the date string
-            date = formatDate(date);
-        }
-
-
 
         Map<String, Object> workoutData = new HashMap<>();
         workoutData.put("metric_amount", amount);
@@ -124,13 +133,10 @@ public class PersonalGoalFragment extends Fragment {
         workoutData.put("metric_type", metric);
         workoutData.put("date", date);
 
-        // Get a reference to your Firebase database
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-
         // Push the data to the 'personalGoals' node for the current user
-        // The username should be sanitized to be used as a Firebase key, for example:
-        String sanitizedUsername = username.replace(".", ",");
-        databaseRef.child("users").child(sanitizedUsername).child("personalGoals").push().setValue(workoutData)
+        username = username.replace(".", "_").replace("#", "_")
+                .replace("$", "_").replace("[", "_").replace("]", "_");
+        databaseRef.child("users").child(username).child("personalGoals").push().setValue(workoutData)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         // Notify user that data has been added
@@ -146,15 +152,6 @@ public class PersonalGoalFragment extends Fragment {
                         Toast.makeText(requireContext(), "Failed to add Personal Goal!", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-
-
-    // Method to format the date string
-    private String formatDate(String date) {
-        // Assuming date format is MM/DD/YYYY
-        // Replace slashes with empty string to remove them
-        return date.replaceAll("/", "");
     }
 
     private String generateUniqueID(String username, String date) {
@@ -183,7 +180,6 @@ public class PersonalGoalFragment extends Fragment {
                 },
                 year, month, dayOfMonth);
 
-        // Show date picker dialog
         datePickerDialog.show();
     }
 

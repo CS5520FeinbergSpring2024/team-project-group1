@@ -44,13 +44,15 @@
 
     <string-array name="activity_options">
         <item>Run</item>
-        <item>Walk</item>
+        <item>Calisthenics</item>
+        <item>Other</item>
     </string-array>
 
 
     <string-array name="metric_options">
-        <item>miles</item>
-        <item>minutes</item>
+        <item>Miles</item>
+        <item>Minutes</item>
+        <item>Energy points</item>
     </string-array>
 
     <string name="large_text">
