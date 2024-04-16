@@ -65,6 +65,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
             public void onClick(View v) {
                 // Start ChallengeGroupLeaderboard activity
                 Intent intent = new Intent(ChallengeGroupMain.this, ChallengeGroupLeaderboard.class);
+                intent.putExtra("groupName", groupName); // Send groupName with putExtra()
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
@@ -78,52 +79,56 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
 
     private void fetchGroupData() {
-        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
-        groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if (groupName != null) {
+            DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
+            groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                // Retrieve data from snapshots and update views
-                if (snapshot.exists()) {
-                    String description = snapshot.child("description").getValue(String.class);
-                    String groupProfileImgUrl = snapshot.child("groupProfileImg").getValue(String.class);
-                    String endDate = snapshot.child("dueDate").getValue(String.class);
-                    String startDate = snapshot.child("createDate").getValue(String.class);
-                    String timeSpan = startDate + " to " + endDate;
+                    // Retrieve data from snapshots and update views
+                    if (snapshot.exists()) {
+                        String description = snapshot.child("description").getValue(String.class);
+                        String groupProfileImgUrl = snapshot.child("groupProfileImg").getValue(String.class);
+                        String endDate = snapshot.child("dueDate").getValue(String.class);
+                        String startDate = snapshot.child("createDate").getValue(String.class);
+                        String timeSpan = startDate + " to " + endDate;
 
-                    String metric = snapshot.child("amountCategory").getValue(String.class);
-                    String metricUpdate;
-                    if (metric == "time") {
-                        metricUpdate = "minutes";
-                    } else if (metric == "distance") {
-                        metricUpdate = "miles";
-                    } else {
-                        metricUpdate = "EP";
+                        String metric = snapshot.child("amountCategory").getValue(String.class);
+                        String metricUpdate;
+                        if (metric == "time") {
+                            metricUpdate = "minutes";
+                        } else if (metric == "distance") {
+                            metricUpdate = "miles";
+                        } else {
+                            metricUpdate = "EP";
+                        }
+                        Glide.with(ChallengeGroupMain.this)
+                                .load(groupProfileImgUrl)
+                                .into(bannerImageView);
+
+                        Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
+                        String goalAmount = String.valueOf(goalAmountLong);
+                        String fullMetric = goalAmount + " " + metricUpdate;
+
+                        // Update the views with retrieved data
+                        descriptionTextView.setText(description);
+                        metricsValueTextView.setText(fullMetric);
+                        timeSpanValueTextView.setText(timeSpan);
+
+                        //pointsValueTextView.setText(goalAmount);
+
                     }
-                    Glide.with(ChallengeGroupMain.this)
-                            .load(groupProfileImgUrl)
-                            .into(bannerImageView);
+                }
 
-                    Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
-                    String goalAmount = String.valueOf(goalAmountLong);
-                    String fullMetric = goalAmount + " " + metricUpdate;
-
-                    // Update the views with retrieved data
-                    descriptionTextView.setText(description);
-                    metricsValueTextView.setText(fullMetric);
-                    timeSpanValueTextView.setText(timeSpan);
-
-                    //pointsValueTextView.setText(goalAmount);
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ChallengeGroupMain.this, "Error retrieving group data.", Toast.LENGTH_SHORT).show();
 
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ChallengeGroupMain.this, "Error retrieving group data.", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+            });
+        } else {
+            Toast.makeText(ChallengeGroupMain.this, "Group name is invalid.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

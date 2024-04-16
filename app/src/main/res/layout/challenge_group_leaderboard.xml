@@ -79,6 +79,7 @@
         app:layout_constraintTop_toBottomOf="@+id/bannerImageView" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/leaderboardRV"
         android:layout_width="409dp"
         android:layout_height="478dp"
         android:layout_marginStart="1dp"
