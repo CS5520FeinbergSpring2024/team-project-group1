@@ -64,7 +64,9 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // Fetch data from Firebase
-        fetchContenderData();
+        new Thread(
+                this::fetchContenderData)
+                .start();
 
 
         ImageView challengeMainIcon = findViewById(R.id.icon1);
@@ -130,8 +132,6 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
 
                                // Convert workout date to milliseconds since the epoch
                                long workoutDateMillis = convertDateStringToMillis(workoutDate);
-
-
 
 
 

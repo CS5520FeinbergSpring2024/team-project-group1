@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 import edu.northeastern.new_final.R;
 
 public class ChallengeGroupMain extends AppCompatActivity {
@@ -73,8 +75,10 @@ public class ChallengeGroupMain extends AppCompatActivity {
             }
         });
 
-        fetchGroupData();
-
+        // Fetch group data on new thread
+        new Thread(
+                this::fetchGroupData)
+                .start();
 
     }
 
@@ -95,6 +99,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
                         String timeSpan = startDate + " to " + endDate;
 
                         String metric = snapshot.child("amountCategory").getValue(String.class);
+                        metric = Objects.requireNonNull(metric).toLowerCase();
                         Log.d("Metric Value", "Metric: " + metric);
                         String metricUpdate;
 
