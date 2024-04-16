@@ -4,7 +4,9 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +43,11 @@ public class PersonalGoalFragment extends Fragment {
     private DatabaseReference databaseRef;
 
     String username;
-    private String amount;
+    private double amount;
     private String activity;
     private String metric;
     private String date;
+    private boolean blockAddGoal;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -72,6 +75,8 @@ public class PersonalGoalFragment extends Fragment {
         Spinner spinnerMetric = binding.spinnerActivityMetric;
         EditText editTextDate = binding.editTextDate;
         Button buttonAddWorkout = binding.buttonAddWorkout;
+        TextView clearButton = binding.clearButton;
+        clearButton.setOnClickListener(v -> clearFields(editTextAmount, spinnerActivity, spinnerMetric, editTextDate));
         activity = "Run";
         metric = "Miles";
 
@@ -98,6 +103,33 @@ public class PersonalGoalFragment extends Fragment {
 
         editTextDate.setOnClickListener(v -> showDatePickerDialog(editTextDate));
 
+        editTextAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String amountStr = editTextAmount.getText().toString().trim();
+                boolean blockAddGoal = false;
+                if (!amountStr.isEmpty()) {
+                    try {
+                        double amount = Double.parseDouble(amountStr);
+                        editTextAmount.setBackgroundResource(R.drawable.charcoal_outline);
+                    } catch (NumberFormatException e) {
+                        // Set invalid input style
+                        setInvalidInputStyle(editTextAmount);
+                        requireActivity().runOnUiThread(() ->
+                                Toast.makeText(requireContext(), "Invalid Input, please enter number", Toast.LENGTH_SHORT).show());
+                        blockAddGoal = true;
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         buttonAddWorkout.setOnClickListener(v -> {
             // Execute the task on a new thread
@@ -114,21 +146,21 @@ public class PersonalGoalFragment extends Fragment {
                                    Spinner spinnerMetric, EditText editTextDate) {
 
         // Get values from UI elements
-        amount = editTextAmount.getText().toString();
+        String amountStr = editTextAmount.getText() != null ? editTextAmount.getText().toString().trim() : "";
+        amount = !amountStr.equals("") ? Double.parseDouble(amountStr) : -1;
         activity = spinnerActivity.getSelectedItem().toString();
         metric = spinnerMetric.getSelectedItem().toString();
         date = editTextDate.getText().toString();
 
         // Check if any field is empty
-        if (TextUtils.isEmpty(amount) || TextUtils.isEmpty(date)) {
-            // Notify user of empty fields
+        if (TextUtils.isEmpty(date) || amountStr.equals("") || date.isEmpty() || amount < 0 || amount > 300 || blockAddGoal) {
             requireActivity().runOnUiThread(() ->
-                    Toast.makeText(requireContext(), "Please fill all fields!", Toast.LENGTH_SHORT).show());
+                    Toast.makeText(requireContext(), "Error: Invalid Input", Toast.LENGTH_SHORT).show());
             return;
         }
 
         Map<String, Object> workoutData = new HashMap<>();
-        workoutData.put("metric_amount", amount);
+        workoutData.put("metric_amount", amountStr);
         workoutData.put("activity", activity);
         workoutData.put("metric_type", metric);
         workoutData.put("date", date);
@@ -181,6 +213,28 @@ public class PersonalGoalFragment extends Fragment {
                 year, month, dayOfMonth);
 
         datePickerDialog.show();
+    }
+
+    private void setInvalidInputStyle(EditText editText) {
+        editText.setBackgroundResource(R.drawable.invalid_input_outline);
+    }
+
+    private void clearFields(EditText editTextAmount, Spinner spinnerActivity,
+                             Spinner spinnerMetric, EditText editTextDate) {
+        // Clear all fields to default values
+        editTextAmount.setText("0");
+        spinnerActivity.setSelection(0);
+        spinnerMetric.setSelection(0);
+        activity = "Run";
+        metric = "miles";
+
+        // Set the date to today
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        String today = year + "-" + (month + 1) + "-" + dayOfMonth;
+        editTextDate.setText(today);
     }
 
     @Override

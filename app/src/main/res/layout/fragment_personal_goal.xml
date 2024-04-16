@@ -157,16 +157,16 @@
         android:paddingBottom="8dp"
         android:text="@string/pg_buttonLabel"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/buttonCancel"
+        app:layout_constraintBottom_toTopOf="@id/clearButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/buttonCancel"
+        android:id="@+id/clearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="@string/cancel"
+        android:text="@string/clear_fields"
         android:textColor="@android:color/holo_blue_dark"
         android:windowSoftInputMode="adjustNothing"
         app:layout_constraintBottom_toBottomOf="parent"

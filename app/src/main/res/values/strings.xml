@@ -170,5 +170,6 @@
     <string name="add_members">Add Members +</string>
     <string name="my_groups">My Groups</string>
     <string name="log_workout">Log Workout</string>
+    <string name="clear_fields">Clear Fields</string>
 
 </resources>
