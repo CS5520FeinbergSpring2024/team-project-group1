@@ -204,7 +204,6 @@ public class ProfileFragment extends Fragment {
 
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         if (imageUri != null) {
-            // Assuming you have a way to get the current user's ID or username
             String userId = username.replace(".", "_");;
 
             StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profile_images/" + userId + ".jpg");

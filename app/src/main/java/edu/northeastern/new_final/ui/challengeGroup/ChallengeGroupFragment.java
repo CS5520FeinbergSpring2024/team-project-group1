@@ -1,11 +1,16 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,14 +26,20 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,10 +79,14 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
     private Button addMembersBtn;
     private TextView membersTV;
 
+    private static final int PICK_IMAGE = 123;
+
+    private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.create_group, container, false);
 
+        Button uploadGroupImageButton = root.findViewById(R.id.uploadImgBtn);
 
         groupNameEditText = root.findViewById(R.id.editGroupName);
         amountEditText = root.findViewById(R.id.editTextAmount);
@@ -248,7 +263,82 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         });
 
 
+        uploadGroupImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             openImageSelector();
+            }
+        });
+
         return root;
+    }
+
+    private void uploadGroupImageToFirebaseStorage(Uri imageUri, String groupName) {
+        if (imageUri != null) {
+            // Sanitize the group name to be Firebase Storage safe
+            String sanitizedGroupName = groupName.replace(".", "_").replace("#", "_")
+                    .replace("$", "_").replace("[", "_").replace("]", "_");
+
+            // Reference to where the image will be stored in Firebase Storage
+            StorageReference groupImageRef = FirebaseStorage.getInstance().getReference("group_images/" + sanitizedGroupName + ".jpg");
+
+            // Upload the image to Firebase Storage
+            groupImageRef.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Retrieve the download URL
+                            groupImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri downloadUri) {
+                                    // Log the URL for debugging purposes
+                                    Log.d("GroupProfile", "Image upload successful. URL: " + downloadUri.toString());
+
+                                    // Update the group's profile image URL in Firebase Database
+                                    DatabaseReference groupsRef = FirebaseDatabase.getInstance().getReference("groups");
+                                    DatabaseReference groupRef = groupsRef.child(sanitizedGroupName);
+                                    groupRef.child("profileImageUrl").setValue(downloadUri.toString())
+                                            .addOnCompleteListener(task -> {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("GroupProfile", "Group profile image URL updated successfully.");
+                                                } else {
+                                                    Log.e("GroupProfile", "Failed to update group profile image URL.", task.getException());
+                                                }
+                                            });
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.e("GroupProfile", "Image upload failed: " + exception.getMessage());
+                        }
+                    });
+        }
+    }
+        private void openImageSelector() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_STORAGE);
+        } else {
+            // Permission has already been granted, open the image selector.
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, PICK_IMAGE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+
+            // Prompt or automatically retrieve the group name based on your application's design
+            String groupName = "yourGroupName"; // Make sure this is dynamically retrieved
+
+            // Now upload the image to Firebase Storage
+            uploadGroupImageToFirebaseStorage(imageUri, groupName);
+        }
     }
 
     private void updateAddGroupButtonState() {
