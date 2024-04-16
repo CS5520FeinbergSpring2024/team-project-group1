@@ -2,6 +2,7 @@ package edu.northeastern.new_final.ui.challengeGroup;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -94,10 +95,13 @@ public class ChallengeGroupMain extends AppCompatActivity {
                         String timeSpan = startDate + " to " + endDate;
 
                         String metric = snapshot.child("amountCategory").getValue(String.class);
+                        Log.d("Metric Value", "Metric: " + metric);
                         String metricUpdate;
-                        if (metric == "time") {
+
+
+                        if (metric.equals("time")) {
                             metricUpdate = "minutes";
-                        } else if (metric == "distance") {
+                        } else if (metric.equals("distance")) {
                             metricUpdate = "miles";
                         } else {
                             metricUpdate = "EP";
