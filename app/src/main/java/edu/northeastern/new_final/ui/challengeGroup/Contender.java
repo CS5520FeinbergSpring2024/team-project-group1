@@ -9,7 +9,6 @@ public class Contender {
     private String memberAmount;
 
     public Contender() {
-        //Default for firebase
     }
 
     public Contender(String profileImageUrl, String memberName, String memberAmount) {

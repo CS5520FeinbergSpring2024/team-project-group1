@@ -17,6 +17,7 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewMessages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
@@ -86,7 +87,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
-                android:id="@+id/icon1"
+                android:id="@+id/displayIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -96,7 +97,7 @@
                 android:src="@drawable/display" />
 
             <ImageView
-                android:id="@+id/icon2"
+                android:id="@+id/starIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -106,7 +107,7 @@
                 android:src="@drawable/star" />
 
             <ImageView
-                android:id="@+id/icon3"
+                android:id="@+id/messageIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
