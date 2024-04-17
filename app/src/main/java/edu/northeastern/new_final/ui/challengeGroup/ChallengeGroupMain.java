@@ -2,6 +2,7 @@ package edu.northeastern.new_final.ui.challengeGroup;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -17,6 +18,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import edu.northeastern.new_final.R;
 public class ChallengeGroupMain extends AppCompatActivity {
@@ -63,63 +70,169 @@ public class ChallengeGroupMain extends AppCompatActivity {
             public void onClick(View v) {
                 // Start ChallengeGroupLeaderboard activity
                 Intent intent = new Intent(ChallengeGroupMain.this, ChallengeGroupLeaderboard.class);
+                intent.putExtra("groupName", groupName); // Send groupName with putExtra()
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
 
-        fetchGroupData();
+        // Fetch group data on new thread
+        new Thread(
+                this::fetchGroupData)
+                .start();
+
+        new Thread(
+                this::calculateGroupTotalPoints)
+                .start();
 
 
     }
 
 
     private void fetchGroupData() {
+        if (groupName != null) {
+            DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
+            groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    // Retrieve data from snapshots and update views
+                    if (snapshot.exists()) {
+                        String description = snapshot.child("description").getValue(String.class);
+                        String groupProfileImgUrl = snapshot.child("groupProfileImg").getValue(String.class);
+                        String endDate = snapshot.child("dueDate").getValue(String.class);
+                        String startDate = snapshot.child("createDate").getValue(String.class);
+                        String timeSpan = startDate + " to " + endDate;
+
+                        String metric = snapshot.child("amountCategory").getValue(String.class);
+                        metric = Objects.requireNonNull(metric).toLowerCase();
+                        Log.d("Metric Value", "Metric: " + metric);
+                        String metricUpdate;
+
+
+                        if (metric.equals("time")) {
+                            metricUpdate = "minutes";
+                        } else if (metric.equals("distance")) {
+                            metricUpdate = "miles";
+                        } else {
+                            metricUpdate = "EP";
+                        }
+                        Glide.with(ChallengeGroupMain.this)
+                                .load(groupProfileImgUrl)
+                                .into(bannerImageView);
+
+                        Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
+                        String goalAmount = String.valueOf(goalAmountLong);
+                        String fullMetric = goalAmount + " " + metricUpdate;
+
+                        // Update the views with retrieved data
+                        descriptionTextView.setText(description);
+                        metricsValueTextView.setText(fullMetric);
+                        timeSpanValueTextView.setText(timeSpan);
+
+                        //pointsValueTextView.setText(goalAmount);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ChallengeGroupMain.this, "Error retrieving group data.", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        } else {
+            Toast.makeText(ChallengeGroupMain.this, "Group name is invalid.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private long convertDateStringToMillis(String dateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US); // Define the date format
+        try {
+            Date date = sdf.parse(dateString); // Parse the date string
+            return date.getTime(); // Get the milliseconds since the epoch
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0; // Return 0 if parsing fails
+        }
+    }
+
+    private void calculateGroupTotalPoints() {
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
         groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                // Retrieve data from snapshots and update views
-                if (snapshot.exists()) {
-                    String description = snapshot.child("description").getValue(String.class);
-                    String groupProfileImgUrl = snapshot.child("groupProfileImg").getValue(String.class);
-                    String endDate = snapshot.child("dueDate").getValue(String.class);
-                    String startDate = snapshot.child("createDate").getValue(String.class);
-                    String timeSpan = startDate + " to " + endDate;
+                // Get the group details for filtering
+                String groupAmountCategory = snapshot.child("amountCategory").getValue(String.class);
+                String groupCreateDate = snapshot.child("createDate").getValue(String.class);
+                String groupDueDate = snapshot.child("dueDate").getValue(String.class);
 
-                    String metric = snapshot.child("amountCategory").getValue(String.class);
-                    String metricUpdate;
-                    if (metric == "time") {
-                        metricUpdate = "minutes";
-                    } else if (metric == "distance") {
-                        metricUpdate = "miles";
-                    } else {
-                        metricUpdate = "EP";
-                    }
-                    Glide.with(ChallengeGroupMain.this)
-                            .load(groupProfileImgUrl)
-                            .into(bannerImageView);
+                // Convert group dates to milliseconds since the epoch
+                long createDateMillis = convertDateStringToMillis(groupCreateDate);
+                long dueDateMillis = convertDateStringToMillis(groupDueDate);
 
-                    Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
-                    String goalAmount = String.valueOf(goalAmountLong);
-                    String fullMetric = goalAmount + " " + metricUpdate;
+                // Variable to store the total points
+                final long[] totalPoints = {0};
 
-                    // Update the views with retrieved data
-                    descriptionTextView.setText(description);
-                    metricsValueTextView.setText(fullMetric);
-                    timeSpanValueTextView.setText(timeSpan);
+                // Find the members in a given group
+                for (DataSnapshot memberSnapshot : snapshot.child("members").getChildren()) {
+                    String memberID = memberSnapshot.getKey();
 
-                    //pointsValueTextView.setText(goalAmount);
+                    // Pull user data for the member from "users" node
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(memberID);
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                            // Pull workout history
+                            long memberTotalAmount = 0;
+                            for (DataSnapshot workoutSnapshot : userSnapshot.child("workout_history").getChildren()) {
+                                String workoutDate = workoutSnapshot.child("date").getValue(String.class);
+                                String workoutAmountCategory = workoutSnapshot.child("amountCategory").getValue(String.class);
 
+                                long workoutAmount = groupAmountCategory.equals("ep") ?
+                                        workoutSnapshot.child("energyPoints").getValue(Long.class) :
+                                        workoutSnapshot.child("amount").getValue(Long.class);
+
+                                // Convert workout date to milliseconds since the epoch
+                                long workoutDateMillis = convertDateStringToMillis(workoutDate);
+
+                                // If tracking EP for group, include workouts in date range agnostic of distance/time
+                                if (groupAmountCategory.equals("ep")) {
+                                    // Check if the workout falls within the group's date range
+                                    if (workoutDateMillis >= createDateMillis &&
+                                            workoutDateMillis <= dueDateMillis) {
+                                        memberTotalAmount += workoutAmount;
+                                    }
+                                } else {
+                                    // Check if the workout falls within the group's date range and has the same amount category
+                                    if (workoutDateMillis >= createDateMillis &&
+                                            workoutDateMillis <= dueDateMillis &&
+                                            groupAmountCategory.equals(workoutAmountCategory)) {
+                                        memberTotalAmount += workoutAmount;
+                                    }
+                                }
+                            }
+
+                            // Add the member's total amount to the running total
+                            totalPoints[0] += memberTotalAmount;
+                            String pointsToRender = String.valueOf(totalPoints[0]);
+
+                            pointsValueTextView.setText(pointsToRender);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("FetchContenderData", "Error group data: " + error.getMessage());
+                        }
+                    });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ChallengeGroupMain.this, "Error retrieving group data.", Toast.LENGTH_SHORT).show();
-
+                Log.e("FetchContenderData", "Error fetching group data: " + error.getMessage());
             }
         });
     }
