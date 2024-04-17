@@ -19,9 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import edu.northeastern.new_final.R;
-
 public class ChallengeGroupMain extends AppCompatActivity {
-
     // Define variables for views
     private TextView pointsValueTextView;
     private ProgressBar progressBar;

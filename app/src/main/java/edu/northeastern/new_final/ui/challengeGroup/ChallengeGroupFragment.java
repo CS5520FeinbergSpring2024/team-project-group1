@@ -2,11 +2,14 @@ package edu.northeastern.new_final.ui.challengeGroup;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -41,6 +44,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,6 +86,10 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
     private TextView membersTV;
 
     private static final int PICK_IMAGE = 123;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 100;
+
+
     private String currentGroupName;
 
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
@@ -328,28 +336,58 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         }
     }
     private void openImageSelector() {
-        // Store the group name in the class-level variable
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_STORAGE);
-        } else {
-            // Permission has already been granted, open the image selector.
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, PICK_IMAGE);
-        }
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Select Option");
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (options[item].equals("Take Photo")) {
+                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (takePicture.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                    }
+                } else if (options[item].equals("Choose from Gallery")) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto, PICK_IMAGE);
+                } else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        builder.show();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PICK_IMAGE && data != null && data.getData() != null) {
+                imageUri = data.getData();
+                // Use this Uri in your app. For example, display it in an ImageView or upload it to Firebase.
+            } else if (requestCode == REQUEST_IMAGE_CAPTURE && data != null) {
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    // Process and upload the Bitmap as needed. You might want to save it as a file and then upload it.
+                    // Ensure the following method exists and handles the Bitmap correctly
+                    imageUri = getImageUri(getContext(), imageBitmap);
+                }
+            }
 
-            // Retrieve the group name from where you stored it (e.g., EditText or instance variable)
-            String groupName = groupNameEditText.getText().toString().trim(); // Assuming editTextGroupName is accessible
-
-            // Now upload the image to Firebase Storage
-            uploadGroupImageToFirebaseStorage(imageUri, groupName);
+            // Here you might want to update your ImageView or UI element with the new image.
+            // Also, ensure that imageUri is being used to update Firebase.
         }
+    }
+
+    private Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "GroupImage", null);
+        return Uri.parse(path);
     }
 
     private void updateAddGroupButtonState() {

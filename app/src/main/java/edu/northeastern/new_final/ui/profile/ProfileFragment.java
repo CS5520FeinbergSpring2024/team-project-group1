@@ -4,10 +4,14 @@ import edu.northeastern.new_final.CircularImageView;
 import edu.northeastern.new_final.R;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -40,6 +44,8 @@ import com.google.firebase.storage.UploadTask;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
+
 import edu.northeastern.new_final.databinding.FragmentProfileBinding;
 
 public class ProfileFragment extends Fragment {
@@ -47,6 +53,10 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private FragmentContainerView fragmentContainer;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
+
+    private static final int PERMISSIONS_REQUEST_CAMERA = 2;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 100;
 
     private static final int PICK_IMAGE = 123;
     String username;
@@ -204,7 +214,7 @@ public class ProfileFragment extends Fragment {
 
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         if (imageUri != null) {
-            String userId = username.replace(".", "_");;
+            String userId = username.replace(".", "_");
 
             StorageReference profileImageRef = FirebaseStorage.getInstance().getReference("profile_images/" + userId + ".jpg");
 
@@ -223,6 +233,11 @@ public class ProfileFragment extends Fragment {
                                             .addOnCompleteListener(task -> {
                                                 if (task.isSuccessful()) {
                                                     Log.d("ProfileFragment", "User profile updated with new image URL.");
+
+                                                    // Set the image in the ImageView using Glide or similar library
+                                                    Glide.with(ProfileFragment.this)
+                                                            .load(downloadUri.toString())
+                                                            .into(binding.imageViewProfile);
                                                 } else {
                                                     Log.e("ProfileFragment", "Failed to update user profile image URL.", task.getException());
                                                 }
@@ -243,15 +258,45 @@ public class ProfileFragment extends Fragment {
 
 
 
+
     private void openImageSelector() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_STORAGE);
-        } else {
-            // Permission has already been granted, open the image selector.
-            selectImage();
+        final CharSequence[] items = {"Take Photo", "Choose from Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add Photo");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
+                    } else {
+                        takePhoto();
+                    }
+                } else if (items[item].equals("Choose from Gallery")) {
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_STORAGE);
+                    } else {
+                        selectImageFromGallery();
+                    }
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void takePhoto() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
+    private void selectImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE);
+    }
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE);
@@ -273,15 +318,28 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-            // Use the Uri to load the image into your ImageView. You might want to use a library like Glide or Picasso.
-            Glide.with(this).load(imageUri).into(binding.imageViewProfile);
-            // Now upload the image to Firebase Storage
-            uploadImageToFirebaseStorage(imageUri);
+        if (resultCode == Activity.RESULT_OK) {
+            Uri imageUri = null;
+            if (requestCode == PICK_IMAGE) {
+                imageUri = data.getData();
+            } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                Bundle extras = data.getExtras();
+                Bitmap photo = (Bitmap) extras.get("data");
+                imageUri = getImageUri(getContext(), photo);
+            }
+
+            if (imageUri != null) {
+                // Upload the image to Firebase Storage or another service
+                uploadImageToFirebaseStorage(imageUri);
+            }
         }
     }
-
+    private Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 
 
     private void loadFragment(Fragment fragment) {
