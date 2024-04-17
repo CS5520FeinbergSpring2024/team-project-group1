@@ -67,8 +67,7 @@ public class MyGroupsFragment extends Fragment {
         adapter = new GroupAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-
-        fetchUserGroups();
+        new Thread(() -> fetchUserGroups()).start();
 
 
         return view;
@@ -102,18 +101,24 @@ public class MyGroupsFragment extends Fragment {
                     }
                 }
 
-                // Update the RecyclerView with the retrieved group list
-                adapter.setGroupList(groupList);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        // Update the RecyclerView with the retrieved group list
+                        adapter.setGroupList(groupList);
 
 
-                // Check if list is empty
-                if (groupList.isEmpty()) {
-                    textViewNoGroups.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    textViewNoGroups.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
+                        // Check if list is empty
+                        if (groupList.isEmpty()) {
+                            textViewNoGroups.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        } else {
+                            textViewNoGroups.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
             }
 
             @Override
