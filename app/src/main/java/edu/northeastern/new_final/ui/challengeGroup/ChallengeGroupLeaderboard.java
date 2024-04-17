@@ -71,17 +71,25 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
                 .start();
 
 
-        ImageView challengeMainIcon = findViewById(R.id.icon1);
+        ImageView displayIcon = findViewById(R.id.displayIcon);
+        ImageView messagingIcon = findViewById(R.id.messageIcon);
 
-        // Set click listener for icon to jump back to challengeMain
-        challengeMainIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start ChallengeGroupMain activity
-                Intent intent = new Intent(ChallengeGroupLeaderboard.this, ChallengeGroupMain.class);
-                intent.putExtra("groupName", groupName); // Send groupName with putExtra()
-                startActivity(intent);
-            }
+        displayIcon.setOnClickListener(v -> {
+            // Start ChallengeGroupLeaderboard activity
+            Intent intent = new Intent(ChallengeGroupLeaderboard.this, ChallengeGroupMain.class);
+            intent.putExtra("groupName", groupName); // Send groupName with putExtra()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        });
+
+        messagingIcon.setOnClickListener(v -> {
+            // Start ChallengeGroupLeaderboard activity
+            Intent intent = new Intent(ChallengeGroupLeaderboard.this, ChallengeGroupMessaging.class);
+            intent.putExtra("groupName", groupName); // Send groupName with putExtra()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         });
 
     }

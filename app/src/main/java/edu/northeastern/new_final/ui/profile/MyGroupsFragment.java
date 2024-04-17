@@ -85,7 +85,7 @@ public class MyGroupsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Group> groupList = new ArrayList<>();
-                for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
+                for(DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
 
                     // Check if current user is a member of this group
                     if (groupSnapshot.child("members").hasChild(sanitizedUsername)) {
@@ -133,7 +133,6 @@ public class MyGroupsFragment extends Fragment {
 
 
     }
-
 
 
     @Override

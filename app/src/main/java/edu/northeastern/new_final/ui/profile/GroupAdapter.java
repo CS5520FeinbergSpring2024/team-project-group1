@@ -12,6 +12,7 @@ import java.util.List;
 
 import edu.northeastern.new_final.R;
 import edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupMain;
+import edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupMessaging;
 
 public class GroupAdapter  extends RecyclerView.Adapter<GroupViewHolder> {
 

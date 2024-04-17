@@ -37,6 +37,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
     private String groupName;
 
     private ImageView leaderboardIcon;
+    private ImageView messagingIcon;
 
     private ImageView bannerImageView;
 
@@ -60,7 +61,9 @@ public class ChallengeGroupMain extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         metricsValueTextView = findViewById(R.id.metricsValueTextView);
         timeSpanValueTextView = findViewById(R.id.timeSpanValueTextView);
-        leaderboardIcon = findViewById(R.id.icon2);
+        leaderboardIcon = findViewById(R.id.starIcon);
+        messagingIcon = findViewById(R.id.messageIcon);
+
         bannerImageView = findViewById(R.id.bannerImageView);
 
         // Set Group Name
@@ -68,16 +71,22 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
 
         // Set click listener for icon2
-        leaderboardIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start ChallengeGroupLeaderboard activity
-                Intent intent = new Intent(ChallengeGroupMain.this, ChallengeGroupLeaderboard.class);
-                intent.putExtra("groupName", groupName); // Send groupName with putExtra()
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-            }
+        leaderboardIcon.setOnClickListener(v -> {
+            // Start ChallengeGroupLeaderboard activity
+            Intent intent = new Intent(ChallengeGroupMain.this, ChallengeGroupLeaderboard.class);
+            intent.putExtra("groupName", groupName); // Send groupName with putExtra()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        });
+
+        messagingIcon.setOnClickListener(v -> {
+            // Start ChallengeGroupLeaderboard activity
+            Intent intent = new Intent(ChallengeGroupMain.this, ChallengeGroupMessaging.class);
+            intent.putExtra("groupName", groupName); // Send groupName with putExtra()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         });
 
         // Fetch group data on new thread
