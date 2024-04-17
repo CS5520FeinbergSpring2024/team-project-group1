@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -495,13 +497,26 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                 groupRef.child("groupProfileImg").setValue(uri.toString()).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(getContext(), "Group image uploaded successfully", Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                // Get the ImageView reference from the activity layout
+                                ImageView bannerImageView = getActivity().findViewById(R.id.bannerImageView);
+
+                                if (bannerImageView != null) {
+                                    Glide.with(getActivity()).load(uri.toString()).into(bannerImageView);
+                                }
+                            });
+                        }
                     } else {
                         Toast.makeText(getContext(), "Failed to upload group image: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(getContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
             });
-        }).addOnFailureListener(e -> Toast.makeText(getContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        });
     }
+
 
 
     private void showFindUsersDialog() {

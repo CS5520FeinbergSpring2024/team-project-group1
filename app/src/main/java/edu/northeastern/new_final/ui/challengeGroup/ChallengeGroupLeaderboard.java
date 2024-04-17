@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +53,7 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
         groupName = getIntent().getStringExtra("groupName");
 
         groupNameTextView = findViewById(R.id.groupName);
-
+        loadGroupProfileImage();
 
         // Set Group Name
         groupNameTextView.setText(groupName);
@@ -196,7 +197,25 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
             }
         });
     }
-
+    private void loadGroupProfileImage() {
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
+        groupRef.child("groupProfileImg").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String imageUrl = dataSnapshot.getValue(String.class);
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        ImageView bannerImageView = findViewById(R.id.bannerImageView);
+                        Glide.with(ChallengeGroupLeaderboard.this).load(imageUrl).into(bannerImageView);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("GroupLeaderboard", "Failed to load group image.", databaseError.toException());
+            }
+        });
+    }
     private long convertDateStringToMillis(String dateString) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US); // Define the date format
         try {
