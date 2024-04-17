@@ -68,7 +68,7 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
     private EditText dateEditText;
     private EditText description;
     private Button addGroupButton;
-    private TextView cancelButton;
+    private TextView clearButton;
     private ToggleButton distanceToggleButton;
     private ToggleButton timeToggleButton;
     private ToggleButton energyPointsToggleButton;
@@ -106,7 +106,7 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         workoutType = root.findViewById(R.id.spinnerWorkoutType);
         dateEditText = root.findViewById(R.id.dateEditText);
         addGroupButton = root.findViewById(R.id.buttonAddGroup);
-        cancelButton = root.findViewById(R.id.buttonCancel);
+        clearButton = root.findViewById(R.id.buttonClear);
         distanceToggleButton = root.findViewById(R.id.toggleButtonDistance);
         timeToggleButton = root.findViewById(R.id.toggleButtonTime);
         energyPointsToggleButton = root.findViewById(R.id.toggleButtonEP);
@@ -272,8 +272,32 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
             }
         });
 
-        cancelButton.setOnClickListener(v -> {
-        });
+        // Reset all UI elements to original state
+        clearButton.setOnClickListener(v -> {
+                    // Clear all the EditText fields
+                    groupNameEditText.setText("");
+                    amountEditText.setText("");
+                    dateEditText.setText("");
+                    description.setText("");
+
+                    // Reset the toggle buttons to their initial state
+                    distanceToggleButton.setChecked(true);
+                    timeToggleButton.setChecked(false);
+                    energyPointsToggleButton.setChecked(false);
+
+                    // Reset the spinner to the default selection
+                    workoutType.setSelection(0);
+
+                    // Clear the imageUri
+                    imageUri = null;
+
+                    // Clear the members list and update the UI
+                    members.clear();
+                    updateSelectedMembersUI(new ArrayList<>());
+
+                    //Toast update at conclusion
+                    Toast.makeText(getContext(), "Form cleared", Toast.LENGTH_SHORT).show();
+                });
 
 
         uploadGroupImageButton.setOnClickListener(new View.OnClickListener() {

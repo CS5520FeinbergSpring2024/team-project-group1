@@ -42,6 +42,9 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
     TextView groupNameTextView;
 
+    Long goalAmountLong;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +110,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
                         String metric = snapshot.child("amountCategory").getValue(String.class);
                         metric = Objects.requireNonNull(metric).toLowerCase();
-                        Log.d("Metric Value", "Metric: " + metric);
+
                         String metricUpdate;
 
 
@@ -122,7 +125,7 @@ public class ChallengeGroupMain extends AppCompatActivity {
                                 .load(groupProfileImgUrl)
                                 .into(bannerImageView);
 
-                        Long goalAmountLong = snapshot.child("amount").getValue(Long.class);
+                        goalAmountLong = snapshot.child("amount").getValue(Long.class);
                         String goalAmount = String.valueOf(goalAmountLong);
                         String fullMetric = goalAmount + " " + metricUpdate;
 
@@ -218,8 +221,12 @@ public class ChallengeGroupMain extends AppCompatActivity {
                             // Add the member's total amount to the running total
                             totalPoints[0] += memberTotalAmount;
                             String pointsToRender = String.valueOf(totalPoints[0]);
-
                             pointsValueTextView.setText(pointsToRender);
+
+                            int goalAmountInt = Math.toIntExact(goalAmountLong);
+                            int totalPointsInt = Math.toIntExact(totalPoints[0]);
+                            int progress = (int) ((double) totalPointsInt / goalAmountInt * 100);
+                            progressBar.setProgress(progress);
                         }
 
                         @Override

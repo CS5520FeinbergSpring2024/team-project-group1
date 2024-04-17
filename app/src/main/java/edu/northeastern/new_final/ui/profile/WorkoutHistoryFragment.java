@@ -116,12 +116,6 @@ public class WorkoutHistoryFragment extends Fragment {
             String amountCategory = snapshot.child("amountCategory").getValue(String.class);
             String energyPoints = String.valueOf(snapshot.child("energyPoints").getValue(Long.class));
 
-            // Log the extracted values
-            Log.d("Workout History", "Activity: " + activity);
-            Log.d("Workout History", "Date: " + date);
-            Log.d("Workout History", "Amount: " + amount);
-            Log.d("Workout History", "Amount Category: " + amountCategory);
-            Log.d("Workout History", "Energy Points: " + energyPoints);
 
             // Update metric label
             if (amountCategory.equals("distance")) {

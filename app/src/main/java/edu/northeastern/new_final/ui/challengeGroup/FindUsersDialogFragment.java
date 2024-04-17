@@ -1,5 +1,7 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
+import static com.google.common.collect.ComparisonChain.start;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -74,8 +76,9 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
         usersRecyclerView.setAdapter(userAdapter);
 
         searchTerm = "";
+
         // Call firebase method
-        fetchUserList(searchTerm);
+        new Thread(() -> fetchUserList(searchTerm)).start();
 
 
 
@@ -84,14 +87,14 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
             searchTerm = searchEditText.getText().toString().trim();
 
 
-            fetchUserList(searchTerm);
+            new Thread(() -> fetchUserList(searchTerm)).start();
         });
 
         // Clear Search button click listener
         clearButton.setOnClickListener(v -> {
             searchTerm = "";
 
-            fetchUserList(searchTerm);
+            new Thread(() -> fetchUserList(searchTerm)).start();
         });
 
 
