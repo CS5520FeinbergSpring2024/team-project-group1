@@ -73,7 +73,6 @@ public class MyGroupsFragment extends Fragment {
         return view;
     }
 
-
     private void fetchUserGroups() {
         String sanitizedUsername = username.replace(".", "_");
 
@@ -84,6 +83,10 @@ public class MyGroupsFragment extends Fragment {
         groupsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                new Thread(() -> databaseFetchGroups(dataSnapshot, sanitizedUsername)).start();
+            }
+
+            private void databaseFetchGroups(DataSnapshot dataSnapshot, String sanitizedUsername) {
                 List<Group> groupList = new ArrayList<>();
                 for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
 
@@ -125,16 +128,11 @@ public class MyGroupsFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(),"Error retrieving group information.",Toast.LENGTH_SHORT);
-
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getContext(), "Failed to post message", Toast.LENGTH_SHORT).show();
+                }
+            });
             }
-        });
-
-
-    }
-
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
