@@ -22,8 +22,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 import edu.northeastern.new_final.R;
 
@@ -58,9 +63,14 @@ public class ChallengeGroupMessaging extends AppCompatActivity {
 
         // Initialize RecyclerView and Adapter
         recyclerView = findViewById(R.id.recyclerViewMessages);
-        adapter = new GroupMessageAdapter(messageList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new GroupMessageAdapter(messageList);
         recyclerView.setAdapter(adapter);
+
+        // By default, scroll to the bottom of the recycyler view for newest messages
+        recyclerView.post(() -> {
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        });
 
         mainDisplay.setOnClickListener(v -> {
             Intent intent = new Intent(ChallengeGroupMessaging.this, ChallengeGroupMain.class);
@@ -116,7 +126,15 @@ public class ChallengeGroupMessaging extends AppCompatActivity {
                     // Update the messages
                     groupRef.child("messages").setValue(messageList)
                             .addOnSuccessListener(aVoid -> {
-                                adapter.notifyItemInserted(newIndex);
+                                adapter.setMessageList(messageList);
+                                runOnUiThread(() -> Toast
+                                        .makeText(getApplicationContext(), "Message posted!", Toast.LENGTH_SHORT)
+                                        .show());
+                                runOnUiThread(() -> messageInput.setText(""));
+                                runOnUiThread(() -> recyclerView.post(() -> {
+                                    recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                                }));
+
                             })
                             .addOnFailureListener(e -> {
                                 runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Failed to post message", Toast.LENGTH_SHORT).show());
@@ -132,6 +150,7 @@ public class ChallengeGroupMessaging extends AppCompatActivity {
     }
 
     private void fetchMessages() {
+        messageList.clear();
         DatabaseReference groupRef = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("groups")
@@ -141,12 +160,27 @@ public class ChallengeGroupMessaging extends AppCompatActivity {
         groupRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                messageList.clear();
+                //messageList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     GroupMessage message = snapshot.getValue(GroupMessage.class);
                     messageList.add(message);
                 }
-                adapter.notifyDataSetChanged();
+
+                messageList.sort((message1, message2) -> {
+                    // Sort each group message by time and date to put the oldest messages at the top
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                    try {
+                        Date dateTime1 = dateFormat.parse(message1.getDate() + " " + message1.getTime());
+                        Date dateTime2 = dateFormat.parse(message2.getDate() + " " + message2.getTime());
+                        // Compare dates and times
+                        return dateTime1.compareTo(dateTime2);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return 0;
+                });
+
+                adapter.setMessageList(messageList);
             }
 
             @Override

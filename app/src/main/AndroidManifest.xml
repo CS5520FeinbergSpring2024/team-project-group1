@@ -50,6 +50,11 @@
             android:exported="false"
             android:theme="@style/Theme.New_final.NoActionBar" />
 
+        <activity
+            android:name=".ui.challengeGroup.ChallengeGroupMessaging"
+            android:exported="false"
+            android:theme="@style/Theme.New_final.NoActionBar" />
+
     </application>
 
 </manifest>

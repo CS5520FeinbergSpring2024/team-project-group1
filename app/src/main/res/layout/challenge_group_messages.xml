@@ -64,6 +64,8 @@
             android:inputType="textMultiLine"
             android:lines="4"
             android:maxLength="100"
+            android:gravity="top"
+            android:padding="4dp"
             android:maxLines="3" />
 
         <Button
