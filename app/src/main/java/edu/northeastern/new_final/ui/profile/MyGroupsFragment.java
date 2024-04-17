@@ -85,7 +85,7 @@ public class MyGroupsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Group> groupList = new ArrayList<>();
-                for(DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
 
                     // Check if current user is a member of this group
                     if (groupSnapshot.child("members").hasChild(sanitizedUsername)) {
@@ -101,24 +101,27 @@ public class MyGroupsFragment extends Fragment {
                     }
                 }
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        // Update the RecyclerView with the retrieved group list
-                        adapter.setGroupList(groupList);
+                            // Update the RecyclerView with the retrieved group list
+                            adapter.setGroupList(groupList);
 
 
-                        // Check if list is empty
-                        if (groupList.isEmpty()) {
-                            textViewNoGroups.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
-                        } else {
-                            textViewNoGroups.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
+                            // Check if list is empty
+                            if (groupList.isEmpty()) {
+                                textViewNoGroups.setVisibility(View.VISIBLE);
+                                recyclerView.setVisibility(View.GONE);
+                            } else {
+                                textViewNoGroups.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+                            }
                         }
-                    }
-                });
+                    });
+
+                }
             }
 
             @Override
