@@ -12,6 +12,7 @@ import java.util.List;
 
 import edu.northeastern.new_final.R;
 import edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupMain;
+import edu.northeastern.new_final.ui.challengeGroup.ChallengeGroupMessaging;
 
 public class GroupAdapter  extends RecyclerView.Adapter<GroupViewHolder> {
 
@@ -41,7 +42,7 @@ public class GroupAdapter  extends RecyclerView.Adapter<GroupViewHolder> {
             @Override
             public void onClick(View v) {
                 //Start new activity for the selected group
-                Intent intent = new Intent(v.getContext(), ChallengeGroupMain.class);
+                Intent intent = new Intent(v.getContext(), ChallengeGroupMessaging.class);
                 intent.putExtra("groupName", group.getGroupName());
                 v.getContext().startActivity(intent);
             }

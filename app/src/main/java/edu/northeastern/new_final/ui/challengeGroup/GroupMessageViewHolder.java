@@ -27,7 +27,8 @@ public class GroupMessageViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(GroupMessage groupMessage) {
         username.setText(groupMessage.getUsername());
-        date.setText(groupMessage.getDate());
+        String dateAndTime = groupMessage.getDate() + "  " + groupMessage.getTime();
+        date.setText(dateAndTime);
         message.setText(groupMessage.getMessage());
     }
 }
