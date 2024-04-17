@@ -42,7 +42,7 @@ public class GroupAdapter  extends RecyclerView.Adapter<GroupViewHolder> {
             @Override
             public void onClick(View v) {
                 //Start new activity for the selected group
-                Intent intent = new Intent(v.getContext(), ChallengeGroupMessaging.class);
+                Intent intent = new Intent(v.getContext(), ChallengeGroupMain.class);
                 intent.putExtra("groupName", group.getGroupName());
                 v.getContext().startActivity(intent);
             }

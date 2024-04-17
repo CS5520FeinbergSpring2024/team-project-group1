@@ -73,14 +73,20 @@ public class ChallengeGroupMessaging extends AppCompatActivity {
         });
 
         mainDisplay.setOnClickListener(v -> {
+            // Start ChallengeGroupLeaderboard activity
             Intent intent = new Intent(ChallengeGroupMessaging.this, ChallengeGroupMain.class);
-            intent.putExtra("groupName", groupName);
+            intent.putExtra("groupName", groupName); // Send groupName with putExtra()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         });
 
         leaderboard.setOnClickListener(v -> {
+            // Start ChallengeGroupLeaderboard activity
             Intent intent = new Intent(ChallengeGroupMessaging.this, ChallengeGroupLeaderboard.class);
-            intent.putExtra("groupName", groupName);
+            intent.putExtra("groupName", groupName); // Send groupName with putExtra()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         });
 
