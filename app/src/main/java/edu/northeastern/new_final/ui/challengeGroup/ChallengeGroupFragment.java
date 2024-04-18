@@ -117,9 +117,6 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         addMembersBtn = root.findViewById(R.id.AddGroupMembersBtn);
         membersTV = root.findViewById(R.id.membersTV);
 
-
-
-        // Initialize with distance selected
         distanceToggleButton.setChecked(true);
         timeToggleButton.setChecked(false);
         energyPointsToggleButton.setChecked(false);
@@ -135,7 +132,6 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         workoutType.setAdapter(adapter);
 
-        // Get database ref
         databaseRef = FirebaseDatabase.getInstance().getReference("groups");
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("email", null);
@@ -254,7 +250,6 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
             if (groupName.isEmpty() || groupName.equals("") || groupName.equals(" ") || amountStr.isEmpty() || date.isEmpty() || blockAddGroup) {
                 Toast.makeText(getContext(), "Error: Please fill out all fields", Toast.LENGTH_SHORT).show();
             } else {
-                // All fields are filled, proceed with adding workout
                 ChallengeGroup newGroup = new ChallengeGroup(
                         groupName,
                         descriptionResponse,
@@ -272,32 +267,32 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
             }
         });
 
-        // Reset all UI elements to original state
+
         clearButton.setOnClickListener(v -> {
-                    // Clear all the EditText fields
-                    groupNameEditText.setText("");
-                    amountEditText.setText("");
-                    dateEditText.setText("");
-                    description.setText("");
 
-                    // Reset the toggle buttons to their initial state
-                    distanceToggleButton.setChecked(true);
-                    timeToggleButton.setChecked(false);
-                    energyPointsToggleButton.setChecked(false);
+            groupNameEditText.setText("");
+            amountEditText.setText("");
+            dateEditText.setText("");
+            description.setText("");
 
-                    // Reset the spinner to the default selection
-                    workoutType.setSelection(0);
 
-                    // Clear the imageUri
-                    imageUri = null;
+            distanceToggleButton.setChecked(true);
+            timeToggleButton.setChecked(false);
+            energyPointsToggleButton.setChecked(false);
 
-                    // Clear the members list and update the UI
-                    members.clear();
-                    updateSelectedMembersUI(new ArrayList<>());
 
-                    //Toast update at conclusion
-                    Toast.makeText(getContext(), "Form cleared", Toast.LENGTH_SHORT).show();
-                });
+            workoutType.setSelection(0);
+
+
+            imageUri = null;
+
+
+            members.clear();
+            updateSelectedMembersUI(new ArrayList<>());
+
+
+            Toast.makeText(getContext(), "Form cleared", Toast.LENGTH_SHORT).show();
+        });
 
 
         uploadGroupImageButton.setOnClickListener(new View.OnClickListener() {
@@ -308,58 +303,12 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
                 if (!groupName.isEmpty()) {
                     openImageSelector(); // Pass the group name to your image selector method
                 } else {
-                    // Handle the case where the group name is empty
                     Toast.makeText(getContext(), "Please enter a group name.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         return root;
-    }
-
-    private void uploadGroupImageToFirebaseStorage(Uri imageUri, String groupName) {
-        if (imageUri != null) {
-            // Sanitize the group name to be Firebase Storage safe
-            String sanitizedGroupName = groupName.replace(".", "_").replace("#", "_")
-                    .replace("$", "_").replace("[", "_").replace("]", "_");
-
-            // Reference to where the image will be stored in Firebase Storage
-            StorageReference groupImageRef = FirebaseStorage.getInstance().getReference("group_images/" + sanitizedGroupName + ".jpg");
-
-            // Upload the image to Firebase Storage
-            groupImageRef.putFile(imageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Retrieve the download URL
-                            groupImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri downloadUri) {
-                                    // Log the URL for debugging purposes
-                                    Log.d("GroupProfile", "Image upload successful. URL: " + downloadUri.toString());
-
-                                    // Update the group's profile image URL in Firebase Database
-                                    DatabaseReference groupsRef = FirebaseDatabase.getInstance().getReference("groups");
-                                    DatabaseReference groupRef = groupsRef.child(sanitizedGroupName);
-                                    groupRef.child("groupProfileImg").setValue(downloadUri.toString())
-                                            .addOnCompleteListener(task -> {
-                                                if (task.isSuccessful()) {
-                                                    Log.d("GroupProfile", "Group profile image URL updated successfully.");
-                                                } else {
-                                                    Log.e("GroupProfile", "Failed to update group profile image URL.", task.getException());
-                                                }
-                                            });
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Log.e("GroupProfile", "Image upload failed: " + exception.getMessage());
-                        }
-                    });
-        }
     }
     private void openImageSelector() {
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
@@ -393,19 +342,13 @@ public class ChallengeGroupFragment extends Fragment implements FindUsersDialogF
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == PICK_IMAGE && data != null && data.getData() != null) {
                 imageUri = data.getData();
-                // Use this Uri in your app. For example, display it in an ImageView or upload it to Firebase.
             } else if (requestCode == REQUEST_IMAGE_CAPTURE && data != null) {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    // Process and upload the Bitmap as needed. You might want to save it as a file and then upload it.
-                    // Ensure the following method exists and handles the Bitmap correctly
                     imageUri = getImageUri(getContext(), imageBitmap);
                 }
             }
-
-            // Here you might want to update your ImageView or UI element with the new image.
-            // Also, ensure that imageUri is being used to update Firebase.
         }
     }
 

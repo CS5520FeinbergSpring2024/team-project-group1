@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         final String email = editTextEmail.getText().toString().trim();
         final String password = editTextPassword.getText().toString().trim();
 
-        // Basic input validation
+
         if (email.isEmpty()) {
             editTextEmail.setError("Email is required");
             editTextEmail.requestFocus();
@@ -85,30 +85,30 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                        // Check if the password matches
+
                         if (userSnapshot.child("password").getValue(String.class).equals(password)) {
-                            // Password matches, get the user ID
+
                             String userId = userSnapshot.getKey();
 
-                            // Store username in shared preferences
+
                             SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("email", email);
                             editor.apply();
 
 
-                            // Pass the user ID to MainActivity
+
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("userId", userId); // Pass the user ID to MainActivity
+                            intent.putExtra("userId", userId);
                             startActivity(intent);
                             finish();
                         } else {
-                            // Password does not match
+
                             Toast.makeText(LoginActivity.this, "Invalid password", Toast.LENGTH_LONG).show();
                         }
                     }
                 } else {
-                    // User not found
+
                     Toast.makeText(LoginActivity.this, "User not found", Toast.LENGTH_LONG).show();
                 }
             }
@@ -121,13 +121,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showSignUpDialog() {
-        // Create a AlertDialog Builder.
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Get the layout inflater
+
         LayoutInflater inflater = this.getLayoutInflater();
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because it's going in the dialog layout
+
+
         View dialogView = inflater.inflate(R.layout.dialog_signup, null);
         builder.setView(dialogView);
 
@@ -137,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Button buttonDialogCancel = dialogView.findViewById(R.id.buttonDialogCancel);
 
-        // Create the dialog here so we can dismiss it in the button's OnClickListener
         final AlertDialog dialog = builder.create();
 
         buttonDialogCancel.setOnClickListener(v -> dialog.dismiss());
@@ -150,23 +149,15 @@ public class LoginActivity extends AppCompatActivity {
             // Dismiss the dialog here
             dialog.dismiss();
         });
-
-        // Set the negative/cancel button
         builder.setNegativeButton("Cancel", (dialogInterface, id) -> dialogInterface.cancel());
-
-        // Show the dialog
         dialog.show();
     }
 
     private void signUpUser(String email, String password) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference usersRef = database.getReference("users");
-
-        // Sanitize email to use as Firebase key
         String sanitizedEmail = email.replace(".", "_").replace("#", "_")
                 .replace("$", "_").replace("[", "_").replace("]", "_");
-
-        // Check if the email already exists
         DatabaseReference userRef = usersRef.child(sanitizedEmail);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -178,12 +169,11 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
 
                     HashMap<String, Object> user = new HashMap<>();
-                    user.put("email", email); // Keep the original email format here for display purposes
+                    user.put("email", email);
                     user.put("password", password);
                     user.put("total_EP", 0);
                     user.put("workout_history", new ArrayList<>());
                     user.put("team_id", new ArrayList<>());
-
 
                     // for demo purpose only!!
                     HashMap<String, Object> goalDetails = new HashMap<>();

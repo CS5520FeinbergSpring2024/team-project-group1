@@ -58,7 +58,6 @@ public class HomeFragment extends Fragment {
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("email", null);
 
-        // Ensure we handle the case where the email (username) is null
         if (username == null) {
             // Handle the error - perhaps redirect to login screen or show a message
             return view;
