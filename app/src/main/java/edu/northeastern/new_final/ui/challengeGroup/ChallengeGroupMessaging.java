@@ -63,14 +63,18 @@ public class ChallengeGroupMessaging extends AppCompatActivity {
 
         // Initialize RecyclerView and Adapter
         recyclerView = findViewById(R.id.recyclerViewMessages);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GroupMessageAdapter(messageList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
         // By default, scroll to the bottom of the recycyler view for newest messages
-        recyclerView.post(() -> {
-            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-        });
+        if (adapter.getItemCount() >= 1) {
+            recyclerView.post(() -> {
+                recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+            });
+        }
 
         mainDisplay.setOnClickListener(v -> {
             // Start ChallengeGroupLeaderboard activity
