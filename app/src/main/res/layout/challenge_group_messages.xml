@@ -87,30 +87,31 @@
                 android:id="@+id/displayIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="12dp"
                 android:layout_weight="1"
-                android:scaleX="2"
-                android:scaleY="2"
+                android:scaleX="1.25"
+                android:scaleY="1.25"
                 android:src="@drawable/display" />
 
             <ImageView
                 android:id="@+id/starIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="12dp"
                 android:layout_weight="1"
-                android:scaleX="2"
-                android:scaleY="2"
+                android:scaleX="1.25"
+                android:scaleY="1.25"
                 android:src="@drawable/star" />
 
             <ImageView
                 android:id="@+id/messageIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="12dp"
                 android:layout_weight="1"
-                android:scaleX="2"
-                android:scaleY="2"
+                android:scaleX="1.25"
+                android:scaleY="1.25"
                 app:tint="#DAA520"
                 android:src="@drawable/messaging" />
 
