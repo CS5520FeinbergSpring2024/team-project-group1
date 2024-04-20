@@ -71,12 +71,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        if (password.isEmpty()) {
-            editTextPassword.setError("Password is required");
-            editTextPassword.requestFocus();
-            return;
-        }
-
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
         Query query = databaseReference.orderByChild("email").equalTo(email);
 
@@ -86,26 +80,18 @@ public class LoginActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
 
-                        if (userSnapshot.child("password").getValue(String.class).equals(password)) {
 
-                            String userId = userSnapshot.getKey();
+                        String userId = userSnapshot.getKey();
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("email", email);
+                        editor.apply();
 
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("userId", userId);
+                        startActivity(intent);
+                        finish();
 
-                            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("email", email);
-                            editor.apply();
-
-
-
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("userId", userId);
-                            startActivity(intent);
-                            finish();
-                        } else {
-
-                            Toast.makeText(LoginActivity.this, "Invalid password", Toast.LENGTH_LONG).show();
-                        }
                     }
                 } else {
 
