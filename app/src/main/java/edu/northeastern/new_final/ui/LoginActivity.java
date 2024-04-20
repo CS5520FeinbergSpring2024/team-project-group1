@@ -161,16 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                     user.put("workout_history", new ArrayList<>());
                     user.put("team_id", new ArrayList<>());
 
-                    // for demo purpose only!!
-                    HashMap<String, Object> goalDetails = new HashMap<>();
-                    goalDetails.put("activity", "Demo");
-                    goalDetails.put("metric_type", "0");
-                    goalDetails.put("metric_amount", "0");
-                    goalDetails.put("date", "0");
 
-                    HashMap<String, Object> personalGoals = new HashMap<>();
-                    personalGoals.put("0", goalDetails); // Use "0" as a key for the goal details map
-                    user.put("personalGoals", personalGoals);
 
 
                     // Basic validation
