@@ -11,10 +11,10 @@
         android:layout_width="51dp"
         android:layout_height="53dp"
         android:elevation="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/groupPageTitle"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/bannerImageView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
@@ -35,6 +35,7 @@
             android:layout_marginStart="16dp" />
 
     </FrameLayout>
+
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
@@ -76,9 +77,6 @@
                 app:layout_constraintTop_toTopOf="@+id/bannerImageView"
                 app:layout_constraintVertical_bias="0.937" />
 
-
-
-
             <TextView
                 android:id="@+id/groupPageTitle"
                 android:layout_width="wrap_content"
@@ -110,52 +108,53 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <ImageView
-        android:id="@+id/displayIcon"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/iconRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_weight="1"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:src="@drawable/display"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/starIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        android:orientation="horizontal"
 
-    <ImageView
-        android:id="@+id/starIcon"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_weight="1"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:src="@drawable/star"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/messageIcon"
-        app:layout_constraintStart_toEndOf="@+id/displayIcon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:tint="#DAA520"/>
-
-    <ImageView
-        android:id="@+id/messageIcon"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/messaging"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/starIcon"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageView
+            android:id="@+id/displayIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="1"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            app:tint="#DAA520"
+            android:src="@drawable/display" />
+
+        <ImageView
+            android:id="@+id/starIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="1"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:src="@drawable/star" />
+
+        <ImageView
+            android:id="@+id/messageIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:src="@drawable/messaging"
+            />
+
+
+    </LinearLayout>
 
 
 </LinearLayout>
