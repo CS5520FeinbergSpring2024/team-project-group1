@@ -128,7 +128,6 @@
             android:layout_weight="1"
             android:scaleX="1.25"
             android:scaleY="1.25"
-            app:tint="#DAA520"
             android:src="@drawable/display" />
 
         <ImageView
@@ -139,6 +138,7 @@
             android:layout_weight="1"
             android:scaleX="1.25"
             android:scaleY="1.25"
+            app:tint="#DAA520"
             android:src="@drawable/star" />
 
         <ImageView
