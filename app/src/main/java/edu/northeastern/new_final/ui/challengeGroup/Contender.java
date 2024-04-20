@@ -18,7 +18,7 @@ public class Contender {
     }
 
 
-    public String getProfileImageUrl() { return profileImageUrl;}
+        public String getProfileImageUrl() { return profileImageUrl;}
 
     public String getMemberName() { return memberName;}
 

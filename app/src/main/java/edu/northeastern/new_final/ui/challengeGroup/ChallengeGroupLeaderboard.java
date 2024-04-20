@@ -219,6 +219,7 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
             }
         });
     }
+
     private void loadGroupProfileImage() {
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference().child("groups").child(groupName);
         groupRef.child("groupProfileImg").addListenerForSingleValueEvent(new ValueEventListener() {
