@@ -5,6 +5,7 @@ import static com.google.common.collect.ComparisonChain.start;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,6 +123,7 @@ public class FindUsersDialogFragment extends DialogFragment implements UserAdapt
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String username = userSnapshot.getKey(); // Get the username from the Firebase snapshot
+
                     if (!username.equals(currentUser)) { // Exclude the current user
                         if (searchTerm.isEmpty() || username.toLowerCase().contains(searchTerm.toLowerCase())) {
                             // If the search term is empty or matches the username, add it to the userList

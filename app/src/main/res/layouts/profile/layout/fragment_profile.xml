@@ -69,10 +69,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="2dp"
             android:text="Username"
             android:textColor="@color/white"
             android:textStyle="bold"
             tools:layout_editor_absoluteY="125dp"
+
             app:layout_constraintStart_toStartOf="@id/profile_FV"
             app:layout_constraintEnd_toEndOf="@id/profile_FV"
             app:layout_constraintTop_toBottomOf="@id/profile_FV"/>
@@ -130,7 +132,7 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
 
             app:layout_constraintBottom_toTopOf="@id/bottomBar"
             app:layout_constraintEnd_toEndOf="parent"

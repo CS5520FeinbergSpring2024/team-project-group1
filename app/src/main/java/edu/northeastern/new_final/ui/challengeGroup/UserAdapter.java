@@ -1,6 +1,7 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,6 +86,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     }
 
     private void toggleSelection(String user) {
+
+
+
         if (selectedUsers.contains(user)) {
             selectedUsers.remove(user);
         } else {
