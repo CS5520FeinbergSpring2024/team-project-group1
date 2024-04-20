@@ -1,6 +1,8 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +32,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 
+import edu.northeastern.new_final.MainActivity;
 import edu.northeastern.new_final.R;
+import edu.northeastern.new_final.ui.LoginActivity;
 import edu.northeastern.new_final.ui.profile.HistoricalWorkoutAdapter;
 
 
@@ -51,6 +55,8 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
 
         // Retrieve the group name from intent extras from prev. screen
         groupName = getIntent().getStringExtra("groupName");
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("email", null);
 
         groupNameTextView = findViewById(R.id.groupName);
         loadGroupProfileImage();
@@ -73,6 +79,14 @@ public class ChallengeGroupLeaderboard extends AppCompatActivity {
 
         ImageView displayIcon = findViewById(R.id.displayIcon);
         ImageView messagingIcon = findViewById(R.id.messageIcon);
+        ImageView returnButton = findViewById(R.id.returnProfile);
+
+        returnButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ChallengeGroupLeaderboard.this, MainActivity.class);
+            intent.putExtra("userId", username);
+            startActivity(intent);
+            finish();
+        });
 
         displayIcon.setOnClickListener(v -> {
             // Start ChallengeGroupLeaderboard activity

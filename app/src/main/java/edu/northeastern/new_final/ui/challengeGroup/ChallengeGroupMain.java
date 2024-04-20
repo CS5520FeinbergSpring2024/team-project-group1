@@ -1,6 +1,8 @@
 package edu.northeastern.new_final.ui.challengeGroup;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +27,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import edu.northeastern.new_final.MainActivity;
 import edu.northeastern.new_final.R;
 public class ChallengeGroupMain extends AppCompatActivity {
     // Define variables for views
@@ -53,6 +56,8 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
         // Retrieve the group name from intent extras from prev. screen
         groupName = getIntent().getStringExtra("groupName");
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("email", null);
 
         // Initialize Views
         groupNameTextView = findViewById(R.id.groupName);
@@ -68,6 +73,15 @@ public class ChallengeGroupMain extends AppCompatActivity {
 
         // Set Group Name
         groupNameTextView.setText(groupName);
+
+        ImageView returnButton = findViewById(R.id.returnProfile);
+
+        returnButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ChallengeGroupMain.this, MainActivity.class);
+            intent.putExtra("userId", username);
+            startActivity(intent);
+            finish();
+        });
 
 
         // Set click listener for icon2

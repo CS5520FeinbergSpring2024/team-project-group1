@@ -7,6 +7,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="51dp"
+        android:layout_height="53dp"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/crop_square"
+            android:background="#FFFFFF"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/returnProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_back"
+            android:layout_gravity="top|start"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" />
+
+    </FrameLayout>
+
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
@@ -48,9 +77,6 @@
                 app:layout_constraintTop_toTopOf="@+id/bannerImageView"
                 app:layout_constraintVertical_bias="0.937" />
 
-
-
-
             <TextView
                 android:id="@+id/groupPageTitle"
                 android:layout_width="wrap_content"
@@ -87,6 +113,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,4 +155,6 @@
 
 
     </LinearLayout>
+
+
 </LinearLayout>
