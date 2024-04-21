@@ -114,11 +114,7 @@ public class HomeFragment extends Fragment {
                     String metricAmount = snapshot.child("metric_amount").getValue(String.class);
                     String metricType = snapshot.child("metric_type").getValue(String.class);
 
-                    // Log the extracted values
-                    Log.d("PersonalGoal", "Activity: " + activity);
-                    Log.d("PersonalGoal", "Date: " + date);
-                    Log.d("PersonalGoal", "Metric Amount: " + metricAmount);
-                    Log.d("PersonalGoal", "Metric Type: " + metricType);
+
 
                     // Create a PersonalGoal object manually and add it to the list
                     PersonalGoal personalGoal = new PersonalGoal(activity, date, metricAmount, metricType);
